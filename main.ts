@@ -1001,6 +1001,7 @@ namespace qdeewifi {
         * @param body code to run when event is raised
         */
    //% weight=66 blockId=onQdeeGetCmd block="on Qdee get|%code|Command"
+   //% subcategory=Data  
    export function onQdeeGetCmd(code: Qdee_IOTCmdType, body: Action) {
        control.onEvent(MESSAGE_IOT_HEAD, code, body);
    }
@@ -1010,6 +1011,7 @@ namespace qdeewifi {
     * 
     */
    //% weight=64 blockId="qdee_sendSensorData" block="Send|%cmd|sensor data %data"
+  //% subcategory=Data
    export function qdee_sendSensorData(cmd: Qdee_IOTCmdType, data: number) {
        let cmdStr: string;
        switch (cmd) {

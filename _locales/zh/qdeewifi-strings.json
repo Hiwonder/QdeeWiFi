@@ -58,5 +58,21 @@
 	"qdeewifi.Qdee_IOTCmdType.WATERPUMP_ON|block":"水泵开",
 	"qdeewifi.Qdee_IOTCmdType.WATERPUMP_OFF|block":"水泵关",   
 	"qdeewifi.Temp_humi.Temperature|block":"温度",
-	"qdeewifi.Temp_humi.Humidity|block":"湿度"
+	"qdeewifi.Temp_humi.Humidity|block":"湿度",
+	"QdeeLights.Light1|block":"彩灯1",
+	"QdeeLights.Light2|block":"彩灯2",
+	"QdeeLights.Light3|block":"彩灯3",
+	"QdeeLights.Light4|block":"彩灯4",
+	"QdeeLights.Light5|block":"彩灯5",
+	"QdeeLights.Light6|block":"彩灯6",
+	"QdeeLights.All|block":"全部",
+	"QdeeRGBColors.Red|block":"红色",
+	"QdeeRGBColors.Orange|block":"橙色",
+	"QdeeRGBColors.Yellow|block":"黄色",
+	"QdeeRGBColors.Green|block":"绿色",
+	"QdeeRGBColors.Blue|block":"蓝色",
+	"QdeeRGBColors.Indigo|block":"靛蓝色",
+	"QdeeRGBColors.Violet|block":"紫罗兰色",
+	"QdeeRGBColors.Purple|block":"紫色",
+	"QdeeRGBColors.White|block":"白色"
 }
