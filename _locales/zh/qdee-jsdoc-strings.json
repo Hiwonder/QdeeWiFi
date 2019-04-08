@@ -1,3 +1,25 @@
 {
-	"qdeewifi.qdeewifi_Init":"Qdee板初始化，请在开机时执行"
+	"qdeewifi.qdeewifi_Init": "初始化Qdee IoT,在开机时执行",
+	"qdeewifi.qdeeiot_setBusServo":"设置总线舵机的运行",
+	"qdeewifi.qdeeiot_setBusServoNum":"设置总线舵机的编号",
+	"qdeewifi.qdeeiot_readAngle":"读取总线舵机的角度",
+	"qdeewifi.qdeeiot_setMotorSpeed":"设置电机运转速度和方向,由此控制Qdee的运动",
+	"qdeewifi.qdeeiot_setWaterPump":"控制水泵开和关",
+	"qdeewifi.qdee_show_expressions":"Qdee显示一些表情",
+	"qdeewifi.qdee_playMusic":"Qdee按照序号播放音乐",
+	"qdeewifi.qdeeiot_ir_learn_mode":"设置Qdee红外进入学习模式,学习遥控器码",
+	"qdeewifi.qdee_send_learn_data":"Qdee发送红外学习码,控制家电等",
+	"qdeewifi.qdeeiot_getSoundVolume":"音量等级，范围0到255",
+	"qdeewifi.qdeeiot_getBatVoltage":"电量值,单位mV",
+	"qdeewifi.qdeeiot_ultrasonic":"超声波模块测试到障碍物距离",
+	"qdeewifi.qdeeiot_getLightLevel":"亮度等级(0~255)",
+	"qdeewifi.qdeeiot_getsoilhumi":"土壤传感器湿度,根据检测的湿度来判断花草是否需要浇水",
+	"qdeewifi.qdeeiot_gettemperature":"获取温度和湿度",
+	"qdeewifi.onQdeeGetCmd":"获取到相应命令触发事件",
+	"qdeewifi.qdee_sendSensorData":"反馈各传感器数据,这样手机可以远程查看传感器状态",
+	"qdeewifi.qdee_setBrightness":"设置亮度,执行显示彩灯生效",
+	"qdeewifi.qdee_setPixelRGB":"设置彩灯颜色,设置完成后请执行显示彩灯操作",
+	"qdeewifi.qdee_setPixelRGBArgs":"根据RGB值设置彩灯颜色,设置完成后请执行显示彩灯操作",
+	"qdeewifi.qdee_showLight":"显示彩灯，和设置彩灯颜色配合使用，设置完彩灯颜色后必须执行显示彩灯完成显示",
+	"qdeewifi.qdee_clearLight":"关闭彩灯"
 }
