@@ -74,5 +74,6 @@
 	"QdeeRGBColors.Indigo|block":"靛蓝色",
 	"QdeeRGBColors.Violet|block":"紫罗兰色",
 	"QdeeRGBColors.Purple|block":"紫色",
-	"QdeeRGBColors.White|block":"白色"
+	"QdeeRGBColors.White|block":"白色",
+	"qdeewifi.qdeeiot_waterdrop|block":"Qdee|接口 %port|获取水滴传感器ad值(0~255)"
 }

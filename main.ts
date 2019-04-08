@@ -900,6 +900,30 @@ namespace qdeewifi {
         return Math.round(value);
     }
 
+
+    /**
+     * Get soil humidity
+     */
+    //% weight=68 blockId="qdeeiot_waterdrop" block="Qdee|port %port|get water drop sensor ad(0~255)"
+    //% subcategory=Sensor     
+    export function qdeeiot_waterdrop(port: LightPort): number {
+        let value: number = 0;
+        if (port == LightPort.port1) {
+            value = pins.analogReadPin(AnalogPin.P1);
+            value = mapRGB(value, 0, 1023, 0, 100);
+        }
+        else if (port == LightPort.port6) {
+            value = PA6_ad;
+            value = mapRGB(value, 0, 255, 0, 100);
+        }
+        else if (port == LightPort.port8) {
+            value = PB0_ad;
+            value = mapRGB(value, 0, 255, 0, 100);
+        }
+        return Math.round(value);
+    }
+
+
     let ATH10_I2C_ADDR = 0x38;
 
 
@@ -989,7 +1013,7 @@ namespace qdeewifi {
     /**
       * Get sensor temperature and humidity
       */
-    //% weight=68 blockId="qdeeiot_gettemperature" block="Qdee|port %port|get %select"
+    //% weight=60 blockId="qdeeiot_gettemperature" block="Qdee|port %port|get %select"
     //% subcategory=Sensor     
     export function qdeeiot_gettemperature(port: TempSensor, select: Temp_humi): number {
         return readTempHumi(select);
@@ -1000,7 +1024,7 @@ namespace qdeewifi {
         * @param code the ir key button that needs to be pressed
         * @param body code to run when event is raised
         */
-   //% weight=66 blockId=onQdeeGetCmd block="on Qdee get|%code|Command"
+   //% weight=58 blockId=onQdeeGetCmd block="on Qdee get|%code|Command"
    //% subcategory=Data  
    export function onQdeeGetCmd(code: Qdee_IOTCmdType, body: Action) {
        control.onEvent(MESSAGE_IOT_HEAD, code, body);
@@ -1010,7 +1034,7 @@ namespace qdeewifi {
     * Send sensor data 
     * 
     */
-   //% weight=64 blockId="qdee_sendSensorData" block="Send|%cmd|sensor data %data"
+   //% weight=56 blockId="qdee_sendSensorData" block="Send|%cmd|sensor data %data"
   //% subcategory=Data
    export function qdee_sendSensorData(cmd: Qdee_IOTCmdType, data: number) {
        let cmdStr: string;
@@ -1086,7 +1110,7 @@ namespace qdeewifi {
          * @param brightness a measure of LED brightness in 0-255. eg: 255
     */
     //% blockId="qdee_setBrightness" block="set brightness %brightness"
-    //% weight=62
+    //% weight=54
     //% subcategory=Coloured_lights
     export function qdee_setBrightness(brightness: number): void {
         lhRGBLight.setBrightness(brightness);
@@ -1095,7 +1119,7 @@ namespace qdeewifi {
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
-    //% weight=60 blockId=qdee_setPixelRGB block="Set|%lightoffset|color to %rgb"
+    //% weight=52 blockId=qdee_setPixelRGB block="Set|%lightoffset|color to %rgb"
     //% subcategory=Coloured_lights    
     export function qdee_setPixelRGB(lightoffset: QdeeLights, rgb: QdeeRGBColors) {
         lhRGBLight.setPixelColor(lightoffset, rgb);
@@ -1104,7 +1128,7 @@ namespace qdeewifi {
     /**
      * Set RGB Color argument
      */
-    //% weight=58 blockId=qdee_setPixelRGBArgs block="Set|%lightoffset|color to %rgb"
+    //% weight=50 blockId=qdee_setPixelRGBArgs block="Set|%lightoffset|color to %rgb"
     //% subcategory=Coloured_lights    
     export function qdee_setPixelRGBArgs(lightoffset: QdeeLights, rgb: number) {
         lhRGBLight.setPixelColor(lightoffset, rgb);
@@ -1113,7 +1137,7 @@ namespace qdeewifi {
     /**
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
      */
-    //% weight=56 blockId=qdee_showLight block="Show light"
+    //% weight=48 blockId=qdee_showLight block="Show light"
     //% subcategory=Coloured_lights    
     export function qdee_showLight() {
         lhRGBLight.show();
@@ -1127,7 +1151,7 @@ namespace qdeewifi {
     /**
      * Clear the color of the colored lights and turn off the lights.
      */
-    //% weight=54 blockGap=50 blockId=qdee_clearLight block="Clear light"
+    //% weight=46 blockGap=50 blockId=qdee_clearLight block="Clear light"
     //% subcategory=Coloured_lights    
     export function qdee_clearLight() {
         lhRGBLight.clear();
