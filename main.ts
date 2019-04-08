@@ -910,15 +910,13 @@ namespace qdeewifi {
         let value: number = 0;
         if (port == LightPort.port1) {
             value = pins.analogReadPin(AnalogPin.P1);
-            value = mapRGB(value, 0, 1023, 0, 100);
+            value = mapRGB(value, 0, 1023, 0, 255);
         }
         else if (port == LightPort.port6) {
             value = PA6_ad;
-            value = mapRGB(value, 0, 255, 0, 100);
         }
         else if (port == LightPort.port8) {
             value = PB0_ad;
-            value = mapRGB(value, 0, 255, 0, 100);
         }
         return Math.round(value);
     }
