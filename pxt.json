@@ -1,7 +1,7 @@
 {
-    "name": "qdee",
+    "name": "qdeewifi",
     "version": "0.0.1",
-    "description": "Blocks for Hiwonder Qdee",
+    "description": "Blocks for Hiwonder Qdee IoT",
     "license": "MIT",
     "dependencies": {
         "core": "*"
@@ -11,8 +11,8 @@
         "main.ts",
         "QdeeRGBLight.ts",
         "sendbuffer.asm",
-        "_locales/zh/qdee-strings.json",
-        "_locales/zh/qdee-jsdoc-strings.json"
+        "_locales/zh/qdeewifi-strings.json",
+        "_locales/zh/qdeewifi-jsdoc-strings.json"
     ],
     "testFiles": [
         "test.ts"

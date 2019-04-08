@@ -1,6 +1,6 @@
-# qdee
+# qdeewifi
 
-Blocks for Hiwonder Qdee
+Blocks for Hiwonder Qdee IoT
 
 ## License
 
@@ -8,10 +8,10 @@ MIT
 
 ## Supported targets
 
-* for PXT/qdee
+* for PXT/qdeewifi
 (The metadata above is needed for package search.)
 
 ```package
-qdee=github:Hiwonder/Qdee
+qdeewifi=github:Hiwonder/QdeeWiFi
 ```
 
