@@ -1,7 +1,7 @@
 /*
  qdeewifi package
 */
-//% weight=10 icon="\uf013" color=#2896ff
+//% weight=10 icon="\uf1eb" color=#2896ff
 namespace qdeewifi {
     export enum Servos {
         //% block="servo 1"
