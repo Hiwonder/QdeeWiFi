@@ -20,8 +20,8 @@
     "public": true,
     "yotta": {
         "config": {
-            "microbit-dal": {
-                "bluetooth": {
+            "Hiwonder": {
+                "Qdee": {
                     "enabled": 0
                 }
             }
