@@ -921,6 +921,26 @@ namespace qdeewifi {
         return Math.round(value);
     }
 
+      /**
+     * Get flame ad value,the bigger the value, the bigger the flame
+     */
+    //% weight=66 blockId="qdeeiot_flame" block="Qdee|port %port|get flame sensor ad(0~255)"
+    //% subcategory=Sensor     
+    export function qdeeiot_flame(port: LightPort): number {
+        let value: number = 0;
+        if (port == LightPort.port1) {
+            value = pins.analogReadPin(AnalogPin.P1);
+            value = mapRGB(value, 0, 1023, 0, 255);
+        }
+        else if (port == LightPort.port6) {
+            value = PA6_ad;
+        }
+        else if (port == LightPort.port8) {
+            value = PB0_ad;
+        }
+        return Math.round(value);
+    }  
+
 
     let ATH10_I2C_ADDR = 0x38;
 
