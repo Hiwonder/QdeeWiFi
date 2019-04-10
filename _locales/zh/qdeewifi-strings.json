@@ -78,7 +78,12 @@
 	"QdeeRGBColors.Violet|block":"紫罗兰色",
 	"QdeeRGBColors.Purple|block":"紫色",
 	"QdeeRGBColors.White|block":"白色",
-	"qdeewifi.qdeeiot_waterdrop|block":"Qdee|接口 %port|获取水滴传感器ad值(0~255)",
+	"qdeewifi.qdeeiot_waterdrop|block":"Qdee|接口 %port|获取雨滴传感器ad值(0~255)",
 	"qdeewifi.qdeeiot_flame|block":"Qdee|接口 %port|获取火焰传感器ad值(0~255)",
-	"qdeewifi.qdee_avoidSensor|block":"避障传感器|%port|检测到障碍物"
+	"qdeewifi.qdee_avoidSensor|block":"避障传感器|%port|检测到障碍物",
+	"qdeewifi.avoidSensorPort.port1|block":"接口1",
+	"qdeewifi.avoidSensorPort.port2|block":"接口2",
+	"qdeewifi.avoidSensorPort.port3|block":"接口3",
+	"qdeewifi.avoidSensorPort.port6|block":"接口6",
+	"qdeewifi.avoidSensorPort.port8|block":"接口8"
 }
