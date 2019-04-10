@@ -92,7 +92,13 @@ namespace qdeewifi {
         //% block="Water pump on"
         WATERPUMP_ON = 12,
         //% block="Water pump off"
-        WATERPUMP_OFF = 13         
+        WATERPUMP_OFF = 13,
+        //% block="Servo control"
+        SERVO = 14,      
+        //% block="Raindrop"
+        RAINDROP = 15,         
+        //% block="Infrared monitoring"
+        INFRARED = 16            
      }
 
     export enum Temp_humi {
@@ -100,6 +106,19 @@ namespace qdeewifi {
         Temperature = 0x01,
         //% block="Humidity"
         Humidity = 0x02
+    }
+
+    export enum avoidSensorPort {
+        //% block="Port 1"
+        port1 = 0x01,
+        //% block="Port 2"
+        port2 = 0x02,
+        //% block="Port 3"
+        port3 = 0x03,        
+        //% block="Port 6"
+        port6 = 0x06,       
+        //% block="Port 8"
+        port8 = 0x08
     }
 
     let versionNum: number = -1;//-1为未定义
@@ -326,7 +345,44 @@ namespace qdeewifi {
           else if (cmd.charAt(0).compare("K") == 0 && cmd.length == 1)//查询超声波
           {
               control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ULTRASONIC);
-        }
+         }
+        else if (cmd.charAt(0).compare("L") == 0 && cmd.length == 2)//水泵
+        {
+             let arg1Int: number = strToNumber(cmd.substr(1, 1));
+             if (arg1Int != -1)
+             {
+                 qdee_sendSensorData(Qdee_IOTCmdType.WATERPUMP_ON, arg1Int);
+                if (arg1Int == 1)
+                 {
+                     control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.WATERPUMP_ON);
+                 }
+                 else if (arg1Int == 0)
+                 {
+                     control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.WATERPUMP_OFF);
+
+                 }
+             }    
+        }    
+        else if (cmd.charAt(0).compare("M") == 0 && cmd.length == 9)
+        {
+            let arg1Int: number = strToNumber(cmd.substr(1, 2));//编号
+            let arg2Int: number = strToNumber(cmd.substr(3, 2));//角度
+            let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
+
+            if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
+                qdeeiot_setBusServo(busServoPort.port10, arg1Int, arg2Int, arg3Int);
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SERVO);
+            }
+      }        
+      else if (cmd.charAt(0).compare("N") == 0 && cmd.length == 1)//查询雨滴传感器
+      {
+        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.RAINDROP);
+      }
+      else if (cmd.charAt(0).compare("O") == 0 && cmd.length == 1)//查询红外门窗监控状态
+      {
+        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.INFRARED);
+      }           
+            
         if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
         }
@@ -941,6 +997,40 @@ namespace qdeewifi {
         return Math.round(value);
     }  
 
+/**
+* Get the obstacle avoidance sensor status,1 detect obstacle,0 no detect obstacle
+*/   
+   //% weight=64 blockId=qdee_avoidSensor block="Obstacle avoidance sensor|port %port|detect obstacle"
+   export function qdee_avoidSensor(port: avoidSensorPort): boolean {
+    let status = 0;
+    let flag: boolean = false;
+    switch (port)
+    {
+        case avoidSensorPort.port1:
+            pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
+            status = pins.digitalReadPin(DigitalPin.P1);
+            break;
+        case avoidSensorPort.port2:
+            pins.setPull(DigitalPin.P13, PinPullMode.PullUp);
+            status = pins.digitalReadPin(DigitalPin.P13);
+            break;
+        case avoidSensorPort.port3:
+            pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
+            status = pins.digitalReadPin(DigitalPin.P16);
+            break;
+        case avoidSensorPort.port6:
+            status = PA6;
+            break;
+        case avoidSensorPort.port8:
+            status = PB0;
+            break;
+    }   
+    if (status == 1)
+        flag = false;
+    else
+        flag = true;
+    return flag;
+}
 
     let ATH10_I2C_ADDR = 0x38;
 
@@ -1094,6 +1184,15 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.WATERPUMP_OFF:
                cmdStr = "L";
                break;
+           case Qdee_IOTCmdType.SERVO:
+                cmdStr = "M";
+               break;   
+           case Qdee_IOTCmdType.RAINDROP:
+               cmdStr = "N";
+               break;    
+            case Qdee_IOTCmdType.INFRARED:
+               cmdStr = "O";
+               break;            
        }
        cmdStr += data.toString();
        cmdStr += "$";

@@ -76,5 +76,6 @@
 	"QdeeRGBColors.Purple|block":"紫色",
 	"QdeeRGBColors.White|block":"白色",
 	"qdeewifi.qdeeiot_waterdrop|block":"Qdee|接口 %port|获取水滴传感器ad值(0~255)",
-	"qdeewifi.qdeeiot_flame|block":"Qdee|接口 %port|获取火焰传感器ad值(0~255)"
+	"qdeewifi.qdeeiot_flame|block":"Qdee|接口 %port|获取火焰传感器ad值(0~255)",
+	"qdeewifi.qdee_avoidSensor|block":"避障传感器|%port|检测到障碍物"
 }
