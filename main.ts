@@ -1001,9 +1001,10 @@ namespace qdeewifi {
 * Get the obstacle avoidance sensor status,1 detect obstacle,0 no detect obstacle
 */   
    //% weight=64 blockId=qdee_avoidSensor block="Obstacle avoidance sensor|port %port|detect obstacle"
-   export function qdee_avoidSensor(port: avoidSensorPort): boolean {
+   //% subcategory=Sensor    
+   export function qdee_avoidSensor(port: avoidSensorPort): number {
     let status = 0;
-    let flag: boolean = false;
+    let flag: number = 0;
     switch (port)
     {
         case avoidSensorPort.port1:
@@ -1026,9 +1027,9 @@ namespace qdeewifi {
             break;
     }   
     if (status == 1)
-        flag = false;
+        flag = 0;
     else
-        flag = true;
+        flag = 1;
     return flag;
 }
 
