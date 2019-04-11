@@ -370,7 +370,7 @@ namespace qdeewifi {
             let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
 
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
-                qdeeiot_setBusServo(busServoPort.port10, arg1Int, arg2Int, arg3Int);
+                qdeeiot_setBusServo(busServoPort.port10, arg1Int, arg2Int-120, arg3Int);
                 control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SERVO);
             }
       }        
