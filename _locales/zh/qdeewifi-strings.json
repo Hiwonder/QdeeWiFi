@@ -7,7 +7,7 @@
 	"qdeewifi.qdeeiot_setWaterPump|block":"操作水泵|%port|速度(0~100) %speed|",
 	"qdeewifi.qdee_show_expressions|block":"Qdee显示 %type",
 	"qdeewifi.qdee_playMusic|block":"Qdee播放音乐|编号 %num|",
-	"qdeewifi.qdeeiot_ir_learn_mode|block":"设置Qdee红外进入学习模式,学习码编号(1~10) %num",
+	"qdeewifi.qdeeiot_ir_lea rn_mode|block":"设置Qdee红外进入学习模式,学习码编号(1~10) %num",
 	"qdeewifi.qdee_send_learn_data|block":"Qdee发送红外学习码,学习码编号 %num",
 	"qdeewifi.qdeeiot_getSoundVolume|block":"音量值",
 	"qdeewifi.qdeeiot_getBatVoltage|block":"电量值(mV)",
@@ -85,5 +85,7 @@
 	"qdeewifi.avoidSensorPort.port2|block":"接口2",
 	"qdeewifi.avoidSensorPort.port3|block":"接口3",
 	"qdeewifi.avoidSensorPort.port6|block":"接口6",
-	"qdeewifi.avoidSensorPort.port8|block":"接口8"
+	"qdeewifi.avoidSensorPort.port8|block":"接口8",
+	"qdeewifi.qdeeiot_setPwmServos|block":"设置PWM舵机|编号 %index|对应角度 %angle|时长 %duration",
+	"qdeewifi.qdeeiot_setPwmServo|block":"设置单个PWM舵机|编号 %index|角度 %angle|时长 %duratio"
 }

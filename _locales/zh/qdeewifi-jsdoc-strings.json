@@ -24,5 +24,7 @@
 	"qdeewifi.qdee_clearLight":"关闭彩灯",
 	"qdeewifi.qdeeiot_waterdrop":"Qdee获取雨滴的ad值，雨滴越多，ad值越大",
 	"qdeewifi.qdeeiot_flame":"Qdee获取火焰传感器的ad值，火焰越大，ad值越大",
-	"qdeewifi.qdee_avoidSensor":"获得避障传感器状态，从而知道前方有没有障碍物,返回1遇到障碍物，返回0没有遇到障碍物"
+	"qdeewifi.qdee_avoidSensor":"获得避障传感器状态，从而知道前方有没有障碍物,返回1遇到障碍物，返回0没有遇到障碍物",
+	"qdeewifi.qdeeiot_setPwmServos":"设置PWM舵机的角度，范围为0~270，舵机编号和角度都是以数组形式填入，这样可以同时控制多个舵机",
+	"qdeewifi.qdeeiot_setPwmServo":"设置单个PWM舵机的角度，范围为0~270"
 }

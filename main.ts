@@ -370,7 +370,7 @@ namespace qdeewifi {
             let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
 
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
-                qdeeiot_setBusServo(busServoPort.port10, arg1Int, arg2Int-120, arg3Int);
+                qdeeiot_setPwmServo(arg1Int, arg2Int, arg3Int);
                 control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SERVO);
             }
       }        
@@ -586,10 +586,51 @@ namespace qdeewifi {
         return 0;
     }
 
+     function qdeeiot_setPwmServo(index: number, angle: number, duration: number) {
+        let buf = pins.createBuffer(10);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = 0x8;
+        buf[3] = 0x03;//cmd type
+        buf[4] = 0x1;
+        buf[5] = duration & 0xff;
+        buf[6] = (duration >> 8) & 0xff;
+        let position = mapRGB(angle, 0, 270, 500, 2500)
+        buf[7] = index;
+        buf[8] = position & 0xff;
+        buf[9] = (position >> 8) & 0xff;
+        serial.writeBuffer(buf);
+    }
+
+    /**
+    * Set the angle of pwm servo, range of 0~270 degree.Servo num and angles are array type,so you can control multiple servos simultaneously
+    */
+    //% weight=90 blockId=qdeeiot_setPwmServos block="Set pwm servo|index %index|angle %angle|duration %duration"
+    //% inlineInputMode=inline
+    //% subcategory=Control
+    export function qdeeiot_setPwmServos(index: number[], angle: number[], duration: number) {
+        let buf = pins.createBuffer(index.length *3 + 7);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = index.length * 3 + 5;
+        buf[3] = 0x03;//cmd type
+        buf[4] = index.length;
+        buf[5] = duration & 0xff;
+        buf[6] = (duration >> 8) & 0xff;
+        for(let i = 0;i < index.length;i++)
+        {
+            let position = mapRGB(angle[i], 0, 270, 500, 2500)
+            buf[7 + 3 * i] = index[i];
+            buf[8 + 3 * i] = position & 0xff;
+            buf[9 + 3 * i] = (position >> 8) & 0xff;
+        }
+        serial.writeBuffer(buf);
+    }
+
     /**
     *	Set the speed of the number 1 motor and number 2 motor, range of -100~100, that can control the tank to go advance or turn of.
     */
-    //% weight=90 blockId=qdeeiot_setMotorSpeed block="Set motor1 speed(-100~100)|%speed1|and motor2|speed %speed2"
+    //% weight=89 blockId=qdeeiot_setMotorSpeed block="Set motor1 speed(-100~100)|%speed1|and motor2|speed %speed2"
     //% speed1.min=-100 speed1.max=100
     //% speed2.min=-100 speed2.max=100
     //% subcategory=Control
