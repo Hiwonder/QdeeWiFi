@@ -87,5 +87,6 @@
 	"qdeewifi.avoidSensorPort.port6|block":"接口6",
 	"qdeewifi.avoidSensorPort.port8|block":"接口8",
 	"qdeewifi.qdeeiot_setPwmServos|block":"设置PWM舵机|编号 %index|对应角度 %angle|时长 %duration",
-	"qdeewifi.qdeeiot_setPwmServo|block":"设置单个PWM舵机|编号 %index|角度 %angle|时长 %duratio"
+	"qdeewifi.qdeeiot_setPwmServo|block":"设置单个PWM舵机|编号 %index|角度 %angle|时长 %duratio",
+	"qdeewifi.qdeeiot_ir_learn_mode|block":"设置Qdee红外进入学习模式,学习码编号(1~10) %num"
 }
