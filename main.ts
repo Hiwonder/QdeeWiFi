@@ -363,11 +363,11 @@ namespace qdeewifi {
                  }
              }    
         }    
-        else if (cmd.charAt(0).compare("M") == 0 && cmd.length == 9)
+        else if (cmd.charAt(0).compare("M") == 0 && cmd.length == 11)
         {
             let arg1Int: number = strToNumber(cmd.substr(1, 2));//编号
-            let arg2Int: number = strToNumber(cmd.substr(3, 2));//角度
-            let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
+            let arg2Int: number = strToNumber(cmd.substr(3, 4));//角度
+            let arg3Int: number = strToNumber(cmd.substr(7, 4));//时间
 
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
                 qdeeiot_setPwmServo(arg1Int, arg2Int, arg3Int);
