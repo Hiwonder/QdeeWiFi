@@ -88,5 +88,16 @@
 	"qdeewifi.avoidSensorPort.port8|block":"接口8",
 	"qdeewifi.qdeeiot_setPwmServos|block":"设置PWM舵机|编号 %index|对应角度 %angle|时长 %duration",
 	"qdeewifi.qdeeiot_setPwmServo|block":"设置单个PWM舵机|编号 %index|角度 %angle|时长 %duratio",
-	"qdeewifi.qdeeiot_ir_learn_mode|block":"设置Qdee红外进入学习模式,学习码编号(1~10) %num"
+	"qdeewifi.qdeeiot_ir_learn_mode|block":"设置Qdee红外进入学习模式,学习码编号(1~10) %num",
+	"qdeewifi.knobPort.port1|block":"接口1",
+	"qdeewifi.knobPort.port6|block":"接口6",
+	"qdeewifi.knobPort.port8|block":"接口8",
+	"qdeewifi.qdee_getKnobValue|block":"旋钮|%port|ad值(0~255)",
+	"qdeewifi.touchKeyPort.port1|block":"接口1",
+	"qdeewifi.touchKeyPort.port2|block":"接口2",
+	"qdeewifi.touchKeyPort.port3|block":"接口3",
+	"qdeewifi.touchKeyPort.port6|block":"接口6",
+	"qdeewifi.touchKeyPort.port8|block":"接口8",
+	"qdeewifi.qdee_touchButton|block":"触摸按钮|%port|被按下"
+
 }

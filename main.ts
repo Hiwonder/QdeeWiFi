@@ -50,6 +50,19 @@ namespace qdeewifi {
         PowerDown = 0x09
     }
 
+    export enum touchKeyPort {
+        //% block="Port 1"
+        port1 = 0x01,
+        //% block="Port 2"
+        port2 = 0x02,
+        //% block="Port 3"
+        port3 = 0x03,
+        //% block="Port 6"
+        port6 = 0x06,
+        //% block="Port 8"
+        port8 = 0x08
+    }
+
     export enum LightPort {
         //% block="Port 1"
         port1 = 0x01,
@@ -117,6 +130,15 @@ namespace qdeewifi {
         port3 = 0x03,        
         //% block="Port 6"
         port6 = 0x06,       
+        //% block="Port 8"
+        port8 = 0x08
+    }
+
+    export enum knobPort {
+        //% block="Port 1"
+        port1 = 0x01,
+        //% block="Port 6"
+        port6 = 0x06,
         //% block="Port 8"
         port8 = 0x08
     }
@@ -1072,7 +1094,59 @@ namespace qdeewifi {
     else
         flag = 1;
     return flag;
-}
+    }
+    
+    /**
+    * Get the ad value of the knob moudule
+    */
+    //% weight=63 blockId=qdee_getKnobValue block="Get knob|port %port|value(0~255)"
+    //% subcategory=Sensor    
+    export function qdee_getKnobValue(port: knobPort): number {
+        let adValue = 0;
+        switch (port) {
+            case knobPort.port1:
+                adValue = pins.analogReadPin(AnalogPin.P1);
+                adValue = adValue * 255 / 1023;
+                break;
+            case knobPort.port6:
+                adValue = PA6_ad;
+                break;
+            case knobPort.port8:
+                adValue = PB0_ad;
+                break;
+        }
+        return adValue;
+    }
+
+    /**
+    * Get the condition of the touch button,press return 1,or return 0
+    */
+    //% weight=62 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"    
+    //% subcategory=Sensor    
+    export function qdee_touchButton(port: touchKeyPort): boolean {
+        let status: boolean = false;
+        switch (port) {
+            case touchKeyPort.port1:
+                pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
+                status = !pins.digitalReadPin(DigitalPin.P1);
+                break;
+            case touchKeyPort.port2:
+                pins.setPull(DigitalPin.P13, PinPullMode.PullUp);
+                status = !pins.digitalReadPin(DigitalPin.P13);
+                break;
+            case touchKeyPort.port3:
+                pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
+                status = !pins.digitalReadPin(DigitalPin.P16);
+                break;
+            case touchKeyPort.port6:
+                status = !PA6;
+                break;
+            case touchKeyPort.port8:
+                status = !PB0;
+                break;
+        }
+        return status;
+    }
 
     let ATH10_I2C_ADDR = 0x38;
 
