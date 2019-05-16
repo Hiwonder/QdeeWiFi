@@ -111,7 +111,15 @@ namespace qdeewifi {
         //% block="Raindrop"
         RAINDROP = 15,         
         //% block="Infrared monitoring"
-        INFRARED = 16            
+        INFRARED = 16,
+        //% block="Bus Servo"
+        BUSSERVO = 17,
+        //% block="Motor run"
+        MOTOR = 18,
+        //% block="Sensor data"
+        SENSOR = 19,
+        //% block="Sensor stop"
+        SENSOR_OFF = 20
      }
 
     export enum Temp_humi {
@@ -208,13 +216,12 @@ namespace qdeewifi {
     let PA7_ad = 0;
     let PB0_ad = 0;
     let PB1_ad = 0;
-
     let MESSAGE_HEAD = 0xff;
     let MESSAGE_IOT_HEAD = 0x102;
-
     let servo1Angle: number = 0xfff;
     let servo2Angle: number = 0xfff;
 
+    let sensorList: number[] = [];
     /**
     * Get the handle command.
     */
@@ -404,8 +411,44 @@ namespace qdeewifi {
       {
         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.INFRARED);
       }           
-            
-        if (cmd.compare("IROK") == 0) {
+      else if(cmd.charAt(0).compare("P") == 0 && cmd.length == 9)
+      {
+        let arg1Int: number = strToNumber(cmd.substr(1, 2));//编号
+        let arg2Int: number = strToNumber(cmd.substr(3, 2));//角度
+        let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
+
+        if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
+            qdeeiot_setBusServo(busServoPort.port10,arg1Int, arg2Int-120, arg3Int);
+            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUSSERVO);
+        }
+      }  
+      else if(cmd.charAt(0).compare("Q") == 0 && cmd.length == 5)
+      {
+            let arg1Int: number = strToNumber(cmd.substr(1, 2));//速度1
+            let arg2Int: number = strToNumber(cmd.substr(3, 2));//速度2    
+            qdeeiot_setMotorSpeed(arg1Int - 100, arg2Int - 100);    
+            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.MOTOR);
+      } 
+      else if(cmd.charAt(0).compare("R") == 0)
+     {
+           let arg1Int: number = strToNumber(cmd.substr(1, 2));
+           if (arg1Int == 0)
+           {
+               sensorList = [];
+               qdee_sendSensorData(Qdee_IOTCmdType.SENSOR, 0);  
+               control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR_OFF);
+           }
+           else
+           {
+               let sensorCount = (cmd.length - 1) / 2;   
+               for (let i = 0; i < sensorCount; i++)
+               {
+                   sensorList.insertAt(i, strToNumber(cmd.substr(i * 2 + 1, 2)))    
+                   control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR);
+               }
+           } 
+      }         
+     if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
         }
         if (cmd.charAt(0).compare("V") == 0 && cmd.length == 4) {
@@ -1306,13 +1349,21 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.RAINDROP:
                cmdStr = "N";
                break;    
-            case Qdee_IOTCmdType.INFRARED:
+           case Qdee_IOTCmdType.INFRARED:
                cmdStr = "O";
-               break;            
+               break;      
+           case Qdee_IOTCmdType.BUSSERVO:
+               cmdStr = "P";
+               break;   
+           case Qdee_IOTCmdType.MOTOR:
+               cmdStr = "Q";
+               break; 
+           case Qdee_IOTCmdType.SENSOR:
+                cmdStr = "R";
+                break;            
        }
        cmdStr += data.toString();
        cmdStr += "$";
-
        let buf = pins.createBuffer(cmdStr.length + 5);
        buf[0] = 0x55;
        buf[1] = 0x55;
@@ -1324,6 +1375,47 @@ namespace qdeewifi {
        }
        serial.writeBuffer(buf);
     }
+
+    /**
+    * Send sensor data 
+    * 
+    */
+   //% weight=55 blockId="qdee_sendSelectSensorData" block="Send sensor data ultrasonic|port %port1|light|port %port2|soil humidity|port %port3|raindrop|port %port4|avoidSensor port|%port5"
+  //% subcategory=Data
+  //% inlineInputMode=inline
+    export function qdee_sendSelectSensorData(port1: ultrasonicPort,port2: LightPort,port3: LightPort,port4: LightPort,port5: avoidSensorPort) {
+        if (sensorList.length > 0)
+        {
+            let cmdStr: string = "R";
+            for (let i = 0; i < sensorList.length; i++)
+            {
+                cmdStr += "|";
+                switch (sensorList[i])
+                {
+                    case 1: cmdStr += volume.toString(); break;
+                    case 2: cmdStr += qdeeiot_ultrasonic(port1).toString(); break;
+                    case 3: cmdStr += qdeeiot_getLightLevel(port2).toString(); break;
+                    case 4: cmdStr += qdeeiot_getsoilhumi(port3).toString(); break;
+                    case 5: cmdStr += qdeeiot_waterdrop(port4).toString(); break;
+                    case 6: cmdStr += qdee_avoidSensor(port5).toString();break;
+                }
+                cmdStr += "|";
+            }
+            cmdStr += "$";
+        
+            let buf = pins.createBuffer(cmdStr.length + 5);
+            buf[0] = 0x55;
+            buf[1] = 0x55;
+            buf[2] = (cmdStr.length + 3) & 0xff;
+            buf[3] = 0x3E;//cmd type
+            buf[4] = 0x09;
+            for (let i = 0; i < cmdStr.length; i++) {
+                buf[5 + i] = cmdStr.charCodeAt(i);
+            }
+            serial.writeBuffer(buf);
+        }
+ }
+
     
     function mapRGB(x: number, in_min: number, in_max: number, out_min: number, out_max: number): number {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;

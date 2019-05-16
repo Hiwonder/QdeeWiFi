@@ -59,7 +59,10 @@
 	"qdeewifi.Qdee_IOTCmdType.WATERPUMP_OFF|block":"水泵关",  
 	"qdeewifi.Qdee_IOTCmdType.SERVO|block":"舵机控制",
 	"qdeewifi.Qdee_IOTCmdType.RAINDROP|block":"雨滴", 
-	"qdeewifi.Qdee_IOTCmdType.INFRARED|block":"红外门窗状态", 
+	"qdeewifi.Qdee_IOTCmdType.BUSSERVO|block":"控制总线舵机", 
+	"qdeewifi.Qdee_IOTCmdType.MOTOR|block":"马达控制", 
+	"qdeewifi.Qdee_IOTCmdType.SENSOR|block":"传感器数据", 
+	"qdeewifi.Qdee_IOTCmdType.SENSOR_OFF|block":"传感器数据关闭", 
 	"qdeewifi.Temp_humi.Temperature|block":"温度",
 	"qdeewifi.Temp_humi.Humidity|block":"湿度",
 	"QdeeLights.Light1|block":"彩灯1",
@@ -98,6 +101,7 @@
 	"qdeewifi.touchKeyPort.port3|block":"接口3",
 	"qdeewifi.touchKeyPort.port6|block":"接口6",
 	"qdeewifi.touchKeyPort.port8|block":"接口8",
-	"qdeewifi.qdee_touchButton|block":"触摸按钮|%port|被按下"
+	"qdeewifi.qdee_touchButton|block":"触摸按钮|%port|被按下",
+	"qdeewifi.qdee_sendSelectSensorData|block":"发送个传感器数据超声波|接口 %port1|光线亮度|接口 %port2|土壤湿度|接口 %port3|雨滴|接口 %port4|避障接口|%port5"
 
 }
