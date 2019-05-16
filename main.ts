@@ -429,25 +429,21 @@ namespace qdeewifi {
             qdeeiot_setMotorSpeed(arg1Int - 100, arg2Int - 100);    
             control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.MOTOR);
       } 
-      else if(cmd.charAt(0).compare("R") == 0)
-     {
-           let arg1Int: number = strToNumber(cmd.substr(1, 2));
-           if (arg1Int == 0)
-           {
-               sensorList = [];
-               qdee_sendSensorData(Qdee_IOTCmdType.SENSOR, 0);  
-               control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR_OFF);
-           }
-           else
-           {
-               let sensorCount = (cmd.length - 1) / 2;   
-               for (let i = 0; i < sensorCount; i++)
-               {
-                   sensorList.insertAt(i, strToNumber(cmd.substr(i * 2 + 1, 2)))    
-                   control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR);
-               }
-           } 
-      }         
+      else if (cmd.charAt(0).compare("R") == 0) {
+        sensorList = [];
+        let arg1Int: number = strToNumber(cmd.substr(1, 2));
+        if (arg1Int == 0) {
+            qdee_sendSensorData(Qdee_IOTCmdType.SENSOR, 0);
+            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR_OFF);
+        }
+        else {
+            let sensorCount = (cmd.length - 1) / 2;
+            for (let i = 0; i < sensorCount; i++) {
+                sensorList.insertAt(i, strToNumber(cmd.substr(i * 2 + 1, 2)))
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR);
+            }
+        }
+    }      
      if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
         }
