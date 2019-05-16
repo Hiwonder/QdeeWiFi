@@ -1399,7 +1399,6 @@ namespace qdeewifi {
                     case 5: cmdStr += qdeeiot_waterdrop(port4).toString(); break;
                     case 6: cmdStr += qdee_avoidSensor(port5).toString();break;
                 }
-                cmdStr += "|";
             }
             cmdStr += "$";
         
