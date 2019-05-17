@@ -758,30 +758,12 @@ namespace qdeewifi {
             `)
             break;
 
-            case 1:
-                basic.showIcon(IconNames.Heart);
-                break;
-            
-            case 2:
-                basic.showIcon(IconNames.Yes);
-                break;
-            
-            case 3:
-                basic.showIcon(IconNames.No);
-                break;
-            
-            case 4:
-                basic.showIcon(IconNames.Happy)
-                break;
-            
-            case 5:
-                basic.showIcon(IconNames.Sad)
-                break;
-            
-            case 6:
-                basic.showIcon(IconNames.Angry)
-                break;
-            
+            case 1:basic.showIcon(IconNames.Heart);break;
+            case 2:basic.showIcon(IconNames.Yes);break;
+            case 3:basic.showIcon(IconNames.No);break;
+            case 4:basic.showIcon(IconNames.Happy)break;
+            case 5:basic.showIcon(IconNames.Sad)break;
+            case 6:basic.showIcon(IconNames.Angry)break;
             case 7:
             basic.showLeds(`
             . . # . .
@@ -791,7 +773,6 @@ namespace qdeewifi {
             . . # . .
             `)
             break;
-            
             case 8:
             basic.showLeds(`
             . . # . .
@@ -820,8 +801,7 @@ namespace qdeewifi {
             . . . # .
             . . # . .
             `)
-                break;
-            
+            break; 
         }
     }
   /**
@@ -832,44 +812,16 @@ namespace qdeewifi {
     export function qdee_playMusic(num: Qdee_MusicName) {
         switch (num)
         {
-            case Qdee_MusicName.Stop:
-                music.playTone(262, music.beat(BeatFraction.Sixteenth));
-                break;
-            case Qdee_MusicName.Dadadum:
-                music.beginMelody(music.builtInMelody(Melodies.Dadadadum), MelodyOptions.Once);
-                break;
-            
-            case Qdee_MusicName.Star:
-                music.beginMelody(littleStarMelody(), MelodyOptions.Once)
-                break;       
-            
-            case Qdee_MusicName.Ring:
-                music.beginMelody(music.builtInMelody(Melodies.Ringtone), MelodyOptions.Once)
-                break;          
-            
-            case Qdee_MusicName.Birth:
-                music.beginMelody(music.builtInMelody(Melodies.Birthday), MelodyOptions.Once)
-                break; 
-            
-            case Qdee_MusicName.Wedding:
-                music.beginMelody(music.builtInMelody(Melodies.Wedding), MelodyOptions.Once)
-                break; 
-            
-            case Qdee_MusicName.JumpUp:
-                music.beginMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.Once)
-                break; 
-            
-            case Qdee_MusicName.JumpDown:
-                music.beginMelody(music.builtInMelody(Melodies.JumpDown), MelodyOptions.Once)
-                break; 
-            
-            case Qdee_MusicName.PowerUp:
-                music.beginMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once)
-                break; 
-            
-            case Qdee_MusicName.PowerDown:
-                music.beginMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.Once)
-                break; 
+            case Qdee_MusicName.Stop:music.playTone(262, music.beat(BeatFraction.Sixteenth));break;
+            case Qdee_MusicName.Dadadum:music.beginMelody(music.builtInMelody(Melodies.Dadadadum), MelodyOptions.Once);break;
+            case Qdee_MusicName.Star: music.beginMelody(littleStarMelody(), MelodyOptions.Once);break;       
+            case Qdee_MusicName.Ring:music.beginMelody(music.builtInMelody(Melodies.Ringtone), MelodyOptions.Once)break;          
+            case Qdee_MusicName.Birth:music.beginMelody(music.builtInMelody(Melodies.Birthday), MelodyOptions.Once)break; 
+            case Qdee_MusicName.Wedding:music.beginMelody(music.builtInMelody(Melodies.Wedding), MelodyOptions.Once)break; 
+            case Qdee_MusicName.JumpUp:music.beginMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.Once)break; 
+            case Qdee_MusicName.JumpDown: music.beginMelody(music.builtInMelody(Melodies.JumpDown), MelodyOptions.Once);break; 
+            case Qdee_MusicName.PowerUp: music.beginMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once);break;  
+            case Qdee_MusicName.PowerDown: music.beginMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.Once);break; 
         }
      }
 
@@ -917,8 +869,6 @@ namespace qdeewifi {
         buf[7] = num - 1;
         serial.writeBuffer(buf);
     }
-
-
     /**
     * Get the volume level detected by the sound sensor, range 0 to 255
     */
@@ -927,7 +877,6 @@ namespace qdeewifi {
     export function qdeeiot_getSoundVolume(): number {
         return volume;
     }
-
     /**
      *  Get Qdee current voltage,the unit is mV
     */
@@ -936,8 +885,6 @@ namespace qdeewifi {
     export function qdeeiot_getBatVoltage(): number {
         return currentVoltage;
     }
-
-   
     let distanceBak = 0;
     /**
      * Get the distance of ultrasonic detection to the obstacle 
@@ -1006,7 +953,6 @@ namespace qdeewifi {
             else
                 distanceBak = d;
         }
-
         return Math.round(distance * 10 / 6 / 58);
     }
 
@@ -1057,8 +1003,6 @@ namespace qdeewifi {
         }
         return Math.round(value);
     }
-
-
     /**
      * Get soil humidity
      */
@@ -1111,8 +1055,7 @@ namespace qdeewifi {
     {
         case avoidSensorPort.port1:
             pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
-            status = pins.digitalReadPin(DigitalPin.P1);
-            break;
+            status = pins.digitalReadPin(DigitalPin.P1); break;
         case avoidSensorPort.port2:
             pins.setPull(DigitalPin.P13, PinPullMode.PullUp);
             status = pins.digitalReadPin(DigitalPin.P13);
@@ -1121,12 +1064,8 @@ namespace qdeewifi {
             pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
             status = pins.digitalReadPin(DigitalPin.P16);
             break;
-        case avoidSensorPort.port6:
-            status = PA6;
-            break;
-        case avoidSensorPort.port8:
-            status = PB0;
-            break;
+        case avoidSensorPort.port6:status = PA6;break;
+        case avoidSensorPort.port8:status = PB0;break;
     }   
     if (status == 1)
         flag = 0;
@@ -1147,12 +1086,8 @@ namespace qdeewifi {
                 adValue = pins.analogReadPin(AnalogPin.P1);
                 adValue = adValue * 255 / 1023;
                 break;
-            case knobPort.port6:
-                adValue = PA6_ad;
-                break;
-            case knobPort.port8:
-                adValue = PB0_ad;
-                break;
+            case knobPort.port6:adValue = PA6_ad;break;
+            case knobPort.port8:adValue = PB0_ad;break;
         }
         return adValue;
     }
@@ -1177,19 +1112,12 @@ namespace qdeewifi {
                 pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
                 status = !pins.digitalReadPin(DigitalPin.P16);
                 break;
-            case touchKeyPort.port6:
-                status = !PA6;
-                break;
-            case touchKeyPort.port8:
-                status = !PB0;
-                break;
+            case touchKeyPort.port6:status = !PA6;break;
+            case touchKeyPort.port8:status = !PB0;break;
         }
         return status;
     }
-
     let ATH10_I2C_ADDR = 0x38;
-
-
     function temp_i2cwrite(value: number): number {
         let buf = pins.createBuffer(3);
         buf[0] = value >> 8;
@@ -1256,13 +1184,11 @@ namespace qdeewifi {
         humiValue = (humiValue | buf[2]) << 8;
         humiValue = humiValue | buf[3];
         humiValue = humiValue >> 4;
-
         let tempValue: number = 0;
         tempValue = (tempValue | buf[3]) << 8;
         tempValue = (tempValue | buf[4]) << 8;
         tempValue = tempValue | buf[5];
         tempValue = tempValue & 0xfffff;
-
         if (select == Temp_humi.Temperature) {
             tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
             return Math.round(tempValue);
@@ -1302,61 +1228,26 @@ namespace qdeewifi {
    export function qdee_sendSensorData(cmd: Qdee_IOTCmdType, data: number) {
        let cmdStr: string;
        switch (cmd) {
-           case Qdee_IOTCmdType.LED_COLOR:
-               cmdStr = "A";
-               break;
-           case Qdee_IOTCmdType.BUZZER:
-               cmdStr = "B";
-               break;
-           case Qdee_IOTCmdType.SHOW:
-               cmdStr = "C";
-               break;
-           case Qdee_IOTCmdType.SHAKE:
-               cmdStr = "D";
-               break;  
-           case Qdee_IOTCmdType.IR_REMOTE:
-               cmdStr = "E";
-               break;  
-           case Qdee_IOTCmdType.SOUND:
-               cmdStr = "F";
-               break;
-           case Qdee_IOTCmdType.LIGHT:
-               cmdStr = "G";
-               break;
-           case Qdee_IOTCmdType.TEMP:
-               cmdStr = "H";
-               break;
-           case Qdee_IOTCmdType.HUMI:
-               cmdStr = "I";
-               break;
-           case Qdee_IOTCmdType.SOIL_HUMI:
-               cmdStr = "J";
-               break;
-           case Qdee_IOTCmdType.ULTRASONIC:
-               cmdStr = "K";
-               break;
+           case Qdee_IOTCmdType.LED_COLOR:cmdStr = "A";break;
+           case Qdee_IOTCmdType.BUZZER:cmdStr = "B";break;
+           case Qdee_IOTCmdType.SHOW:cmdStr = "C";break;
+           case Qdee_IOTCmdType.SHAKE:cmdStr = "D";break;  
+           case Qdee_IOTCmdType.IR_REMOTE:cmdStr = "E";break;  
+           case Qdee_IOTCmdType.SOUND:cmdStr = "F";break;
+           case Qdee_IOTCmdType.LIGHT:cmdStr = "G";break;
+           case Qdee_IOTCmdType.TEMP:cmdStr = "H";break;
+           case Qdee_IOTCmdType.HUMI:cmdStr = "I";break;
+           case Qdee_IOTCmdType.SOIL_HUMI:cmdStr = "J";break;
+           case Qdee_IOTCmdType.ULTRASONIC:cmdStr = "K";break;
            case Qdee_IOTCmdType.WATERPUMP_ON:
            case Qdee_IOTCmdType.WATERPUMP_OFF:
-               cmdStr = "L";
-               break;
-           case Qdee_IOTCmdType.SERVO:
-                cmdStr = "M";
-               break;   
-           case Qdee_IOTCmdType.RAINDROP:
-               cmdStr = "N";
-               break;    
-           case Qdee_IOTCmdType.INFRARED:
-               cmdStr = "O";
-               break;      
-           case Qdee_IOTCmdType.BUSSERVO:
-               cmdStr = "P";
-               break;   
-           case Qdee_IOTCmdType.MOTOR:
-               cmdStr = "Q";
-               break; 
-           case Qdee_IOTCmdType.SENSOR:
-                cmdStr = "R";
-                break;            
+               cmdStr = "L"; break;
+           case Qdee_IOTCmdType.SERVO:cmdStr = "M";break;   
+           case Qdee_IOTCmdType.RAINDROP:cmdStr = "N";break;    
+           case Qdee_IOTCmdType.INFRARED:cmdStr = "O";break;      
+           case Qdee_IOTCmdType.BUSSERVO:cmdStr = "P";break;   
+           case Qdee_IOTCmdType.MOTOR:cmdStr = "Q";break; 
+           case Qdee_IOTCmdType.SENSOR:cmdStr = "R";break;            
        }
        cmdStr += data.toString();
        cmdStr += "$";
@@ -1397,7 +1288,6 @@ namespace qdeewifi {
                 }
             }
             cmdStr += "$";
-        
             let buf = pins.createBuffer(cmdStr.length + 5);
             buf[0] = 0x55;
             buf[1] = 0x55;
@@ -1411,7 +1301,6 @@ namespace qdeewifi {
         }
  }
 
-    
     function mapRGB(x: number, in_min: number, in_max: number, out_min: number, out_max: number): number {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
@@ -1466,7 +1355,6 @@ namespace qdeewifi {
     function qdee_setPixelRGBSerial(lightoffset: number, r: number, g: number, b: number) {
         lhRGBLight.setPixelColorRGB(lightoffset, r, g, b);
     }
-
 
     /**
      * Clear the color of the colored lights and turn off the lights.
