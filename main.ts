@@ -812,10 +812,10 @@ namespace qdeewifi {
             case Qdee_MusicName.Stop:music.playTone(262, music.beat(BeatFraction.Sixteenth));break;
             case Qdee_MusicName.Dadadum:music.beginMelody(music.builtInMelody(Melodies.Dadadadum), MelodyOptions.Once);break;
             case Qdee_MusicName.Star: music.beginMelody(littleStarMelody(), MelodyOptions.Once);break;       
-            case Qdee_MusicName.Ring:music.beginMelody(music.builtInMelody(Melodies.Ringtone), MelodyOptions.Once)break;          
-            case Qdee_MusicName.Birth:music.beginMelody(music.builtInMelody(Melodies.Birthday), MelodyOptions.Once)break; 
-            case Qdee_MusicName.Wedding:music.beginMelody(music.builtInMelody(Melodies.Wedding), MelodyOptions.Once)break; 
-            case Qdee_MusicName.JumpUp:music.beginMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.Once)break; 
+            case Qdee_MusicName.Ring: music.beginMelody(music.builtInMelody(Melodies.Ringtone), MelodyOptions.Once);break;          
+            case Qdee_MusicName.Birth: music.beginMelody(music.builtInMelody(Melodies.Birthday), MelodyOptions.Once);break; 
+            case Qdee_MusicName.Wedding: music.beginMelody(music.builtInMelody(Melodies.Wedding), MelodyOptions.Once);break; 
+            case Qdee_MusicName.JumpUp: music.beginMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.Once);break; 
             case Qdee_MusicName.JumpDown: music.beginMelody(music.builtInMelody(Melodies.JumpDown), MelodyOptions.Once);break; 
             case Qdee_MusicName.PowerUp: music.beginMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once);break;  
             case Qdee_MusicName.PowerDown: music.beginMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.Once);break; 
