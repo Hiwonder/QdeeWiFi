@@ -1023,26 +1023,6 @@ namespace qdeewifi {
         return Math.round(value);
     }
 
-      /**
-     * Get flame ad value,the bigger the value, the bigger the flame
-     */
-    //% weight=66 blockId="qdeeiot_flame" block="Qdee|port %port|get flame sensor ad(0~255)"
-    //% subcategory=Sensor     
-    export function qdeeiot_flame(port: LightPort): number {
-        let value: number = 0;
-        if (port == LightPort.port1) {
-            value = pins.analogReadPin(AnalogPin.P1);
-            value = mapRGB(value, 0, 1023, 0, 255);
-        }
-        else if (port == LightPort.port6) {
-            value = PA6_ad;
-        }
-        else if (port == LightPort.port8) {
-            value = PB0_ad;
-        }
-        return Math.round(value);
-    }  
-
 /**
 * Get the obstacle avoidance sensor status,1 detect obstacle,0 no detect obstacle
 */   
@@ -1074,49 +1054,6 @@ namespace qdeewifi {
     return flag;
     }
     
-    /**
-    * Get the ad value of the knob moudule
-    */
-    //% weight=63 blockId=qdee_getKnobValue block="Get knob|port %port|value(0~255)"
-    //% subcategory=Sensor    
-    export function qdee_getKnobValue(port: knobPort): number {
-        let adValue = 0;
-        switch (port) {
-            case knobPort.port1:
-                adValue = pins.analogReadPin(AnalogPin.P1);
-                adValue = adValue * 255 / 1023;
-                break;
-            case knobPort.port6:adValue = PA6_ad;break;
-            case knobPort.port8:adValue = PB0_ad;break;
-        }
-        return adValue;
-    }
-
-    /**
-    * Get the condition of the touch button,press return 1,or return 0
-    */
-    //% weight=62 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"    
-    //% subcategory=Sensor    
-    export function qdee_touchButton(port: touchKeyPort): boolean {
-        let status: boolean = false;
-        switch (port) {
-            case touchKeyPort.port1:
-                pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
-                status = !pins.digitalReadPin(DigitalPin.P1);
-                break;
-            case touchKeyPort.port2:
-                pins.setPull(DigitalPin.P13, PinPullMode.PullUp);
-                status = !pins.digitalReadPin(DigitalPin.P13);
-                break;
-            case touchKeyPort.port3:
-                pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
-                status = !pins.digitalReadPin(DigitalPin.P16);
-                break;
-            case touchKeyPort.port6:status = !PA6;break;
-            case touchKeyPort.port8:status = !PB0;break;
-        }
-        return status;
-    }
     let ATH10_I2C_ADDR = 0x38;
     function temp_i2cwrite(value: number): number {
         let buf = pins.createBuffer(3);
@@ -1279,12 +1216,12 @@ namespace qdeewifi {
                 cmdStr += "|";
                 switch (sensorList[i])
                 {
-                    case 1: cmdStr += volume.toString(); break;
-                    case 2: cmdStr += qdeeiot_ultrasonic(port1).toString(); break;
-                    case 3: cmdStr += qdeeiot_getLightLevel(port2).toString(); break;
-                    case 4: cmdStr += qdeeiot_getsoilhumi(port3).toString(); break;
-                    case 5: cmdStr += qdeeiot_waterdrop(port4).toString(); break;
-                    case 6: cmdStr += qdee_avoidSensor(port5).toString();break;
+                    case 1: cmdStr += ("A" + volume.toString()); break;
+                    case 2: cmdStr += ("B" + qdeeiot_ultrasonic(port1).toString()); break;
+                    case 3: cmdStr += ("C" + qdeeiot_getLightLevel(port2).toString()); break;
+                    case 4: cmdStr += ("D" + qdeeiot_getsoilhumi(port3).toString()); break;
+                    case 5: cmdStr += ("E" + qdeeiot_waterdrop(port4).toString()); break;
+                    case 6: cmdStr += ("F" + qdee_avoidSensor(port5).toString());break;
                 }
             }
             cmdStr += "$";
