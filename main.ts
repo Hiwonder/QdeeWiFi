@@ -411,17 +411,17 @@ namespace qdeewifi {
       {
         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.INFRARED);
       }           
-      else if(cmd.charAt(0).compare("P") == 0 && cmd.length == 9)
-      {
-        let arg1Int: number = strToNumber(cmd.substr(1, 2));//编号
-        let arg2Int: number = strToNumber(cmd.substr(3, 2));//角度
-        let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
+    //   else if(cmd.charAt(0).compare("P") == 0 && cmd.length == 9)
+    //   {
+    //     let arg1Int: number = strToNumber(cmd.substr(1, 2));//编号
+    //     let arg2Int: number = strToNumber(cmd.substr(3, 2));//角度
+    //     let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
 
-        if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
-            qdeeiot_setBusServo(busServoPort.port10,arg1Int, arg2Int-120, arg3Int);
-            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUSSERVO);
-        }
-      }  
+    //     if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
+    //         qdeeiot_setBusServo(busServoPort.port10,arg1Int, arg2Int-120, arg3Int);
+    //         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUSSERVO);
+    //     }
+    //   }  
       else if(cmd.charAt(0).compare("Q") == 0 && cmd.length == 5)
       {
             let arg1Int: number = strToNumber(cmd.substr(1, 2));//速度1
@@ -551,101 +551,101 @@ namespace qdeewifi {
             return -1;
     }
 
-    /**
-    * Set the angle of bus servo 1 to 8, range of -120~120 degree
-    */
-    //% weight=96 blockId=qdeeiot_setBusServo block="Set bus servo|port %port|index %index|angle(-120~120) %angle|duration %duration"
-    //% angle.min=-120 angle.max=120
-    //% inlineInputMode=inline
-    //% subcategory=Control
-    export function qdeeiot_setBusServo(port: busServoPort, index: number, angle: number, duration: number) {
-        angle = angle * -1;
-        if (angle > 120 || angle < -120) {
-            return;
-        }
+    // /**
+    // * Set the angle of bus servo 1 to 8, range of -120~120 degree
+    // */
+    // //% weight=96 blockId=qdeeiot_setBusServo block="Set bus servo|port %port|index %index|angle(-120~120) %angle|duration %duration"
+    // //% angle.min=-120 angle.max=120
+    // //% inlineInputMode=inline
+    // //% subcategory=Control
+    // export function qdeeiot_setBusServo(port: busServoPort, index: number, angle: number, duration: number) {
+    //     angle = angle * -1;
+    //     if (angle > 120 || angle < -120) {
+    //         return;
+    //     }
 
-        angle += 120;
+    //     angle += 120;
 
-        let position = mapRGB(angle, 0, 240, 0, 1000);
+    //     let position = mapRGB(angle, 0, 240, 0, 1000);
 
-        let buf = pins.createBuffer(10);
-        buf[0] = 0x55;
-        buf[1] = 0x55;
-        buf[2] = 0x08;
-        buf[3] = 0x03;//cmd type
-        buf[4] = 0x01;
-        buf[5] = duration & 0xff;
-        buf[6] = (duration >> 8) & 0xff;
-        buf[7] = index;
-        buf[8] = position & 0xff;
-        buf[9] = (position >> 8) & 0xff;
-        serial.writeBuffer(buf);
-    }
+    //     let buf = pins.createBuffer(10);
+    //     buf[0] = 0x55;
+    //     buf[1] = 0x55;
+    //     buf[2] = 0x08;
+    //     buf[3] = 0x03;//cmd type
+    //     buf[4] = 0x01;
+    //     buf[5] = duration & 0xff;
+    //     buf[6] = (duration >> 8) & 0xff;
+    //     buf[7] = index;
+    //     buf[8] = position & 0xff;
+    //     buf[9] = (position >> 8) & 0xff;
+    //     serial.writeBuffer(buf);
+    // }
 
-    /**
-    * Set the number of the servo.
-    */
-    //% weight=94 blockId=qdeeiot_setBusServoNum block="Set bus servo|number %port|"
-    //% subcategory=Control
-    export function qdeeiot_setBusServoNum(index: number) {
-        let buf = pins.createBuffer(5);
-        buf[0] = 0x55;
-        buf[1] = 0x55;
-        buf[2] = 0x03;
-        buf[3] = 0x36;//cmd type
-        buf[4] = index;
-        serial.writeBuffer(buf);
-    }
+    // /**
+    // * Set the number of the servo.
+    // */
+    // //% weight=94 blockId=qdeeiot_setBusServoNum block="Set bus servo|number %port|"
+    // //% subcategory=Control
+    // export function qdeeiot_setBusServoNum(index: number) {
+    //     let buf = pins.createBuffer(5);
+    //     buf[0] = 0x55;
+    //     buf[1] = 0x55;
+    //     buf[2] = 0x03;
+    //     buf[3] = 0x36;//cmd type
+    //     buf[4] = index;
+    //     serial.writeBuffer(buf);
+    // }
 
-    /**
-     * Send read qdee servos angle command
-     */
-    //% weight=92 blockId=qdeeiot_readAngle block="Read|%servo|angle command "
-    //% subcategory=Control
-    export function qdeeiot_readAngle(servo: Servos): number {
-        let buf = pins.createBuffer(6);
-        buf[0] = 0x55;
-        buf[1] = 0x55;
-        buf[2] = 0x04;
-        buf[3] = 0x3E;//cmd type
-        buf[4] = 0x05;
-        buf[5] = servo;
-        serial.writeBuffer(buf);
-        basic.pause(200);
+    // /**
+    //  * Send read qdee servos angle command
+    //  */
+    // //% weight=92 blockId=qdeeiot_readAngle block="Read|%servo|angle command "
+    // //% subcategory=Control
+    // export function qdeeiot_readAngle(servo: Servos): number {
+    //     let buf = pins.createBuffer(6);
+    //     buf[0] = 0x55;
+    //     buf[1] = 0x55;
+    //     buf[2] = 0x04;
+    //     buf[3] = 0x3E;//cmd type
+    //     buf[4] = 0x05;
+    //     buf[5] = servo;
+    //     serial.writeBuffer(buf);
+    //     basic.pause(200);
 
-        let value = 0;
-        if (servo == Servos.Servo1) {
-            if (servo1Angle != 0xfff) {
-                value = servo1Angle;
-                servo1Angle = 0xfff;
-                return value;
-            }
-            else {
-                basic.pause(200);
-                if (servo1Angle != 0xfff) {
-                    value = servo1Angle;
-                    servo1Angle = 0xfff;
-                    return value;
-                }
-            }
-        }
-        else if (servo == Servos.Servo2) {
-            if (servo2Angle != 0xfff) {
-                value = servo2Angle;
-                servo2Angle = 0xfff;
-                return value;
-            }
-            else {
-                basic.pause(200);
-                if (servo2Angle != 0xfff) {
-                    value = servo2Angle;
-                    servo2Angle = 0xfff;
-                    return value;
-                }
-            }
-        }
-        return 0;
-    }
+    //     let value = 0;
+    //     if (servo == Servos.Servo1) {
+    //         if (servo1Angle != 0xfff) {
+    //             value = servo1Angle;
+    //             servo1Angle = 0xfff;
+    //             return value;
+    //         }
+    //         else {
+    //             basic.pause(200);
+    //             if (servo1Angle != 0xfff) {
+    //                 value = servo1Angle;
+    //                 servo1Angle = 0xfff;
+    //                 return value;
+    //             }
+    //         }
+    //     }
+    //     else if (servo == Servos.Servo2) {
+    //         if (servo2Angle != 0xfff) {
+    //             value = servo2Angle;
+    //             servo2Angle = 0xfff;
+    //             return value;
+    //         }
+    //         else {
+    //             basic.pause(200);
+    //             if (servo2Angle != 0xfff) {
+    //                 value = servo2Angle;
+    //                 servo2Angle = 0xfff;
+    //                 return value;
+    //             }
+    //         }
+    //     }
+    //     return 0;
+    // }
 
      function qdeeiot_setPwmServo(index: number, angle: number, duration: number) {
         let buf = pins.createBuffer(10);
