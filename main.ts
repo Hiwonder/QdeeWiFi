@@ -119,7 +119,11 @@ namespace qdeewifi {
         //% block="Sensor data"
         SENSOR = 19,
         //% block="Sensor stop"
-        SENSOR_OFF = 20
+        SENSOR_OFF = 20,
+        //% block="Fan"
+        FAN = 21,       
+        //% block="digital tube"
+        DIGITAL_TUBE = 22
      }
 
     export enum Temp_humi {
@@ -659,7 +663,7 @@ namespace qdeewifi {
     /**
     * Set the Qdee show facial expressions
     */
-    //% weight=86 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
+    //% weight=87 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
     //% type.min=0 type.max=10
     //% subcategory=Control
     export function qdee_show_expressions(type: number) {
@@ -721,7 +725,7 @@ namespace qdeewifi {
   /**
      * Set Qdee play tone
      */
-    //% weight=84 blockId=qdee_playMusic block="Qdee play song|num %num|"
+    //% weight=86 blockId=qdee_playMusic block="Qdee play song|num %num|"
     //% subcategory=Control
     export function qdee_playMusic(num: Qdee_MusicName) {
         switch (num)
@@ -742,6 +746,302 @@ namespace qdeewifi {
      function littleStarMelody(): string[] {
         return ["C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4"];
     }
+
+    let Digitaltube:startbit_TM1640LEDs
+    let TM1640_CMD1 = 0x40;
+    let TM1640_CMD2 = 0xC0;
+    let TM1640_CMD3 = 0x80;
+    let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
+
+    /**
+    *	Set the speed of the fan, range of -100~100.
+    */
+    //% weight=85 blockId=qdeewifi_setFanSpeed  block="Set|%port|fan speed(-100~100) %speed1"
+    //% speed1.min=-100 speed1.max=100
+    //% subcategory=Control
+    export function qdeewifi_setFanSpeed(port: ultrasonicPort, speed1: number) {
+        if (speed1 > 100 || speed1 < -100) {
+            return;
+        }
+        let pin1 = AnalogPin.P1;
+        let pin2 = AnalogPin.P2;
+
+        if (port == ultrasonicPort.port2) {
+            pin1 = AnalogPin.P13;
+            pin2 = AnalogPin.P14;
+        }
+        if (speed1 < 0) {
+            pins.analogWritePin(pin2, 0);
+            pins.analogWritePin(pin1, pins.map(-speed1, 0, 100, 0, 1023));
+        }
+        else if (speed1 > 0) {
+            pins.analogWritePin(pin1, 0);
+            pins.analogWritePin(pin2, pins.map(speed1, 0, 100, 0, 1023));
+        }
+        else {
+            pins.analogWritePin(pin2, 0);
+            pins.analogWritePin(pin1, 0);
+        }
+    }
+    /**
+        * TM1640 LED display
+        */
+       export class startbit_TM1640LEDs {
+        buf: Buffer;
+        clk: DigitalPin;
+        dio: DigitalPin;
+        _ON: number;
+        brightness: number;
+        count: number;  // number of LEDs
+
+        /**
+         * initial TM1640
+         */
+        init(): void {
+            pins.digitalWritePin(this.clk, 0);
+            pins.digitalWritePin(this.dio, 0);
+            this._ON = 8;
+            this.buf = pins.createBuffer(this.count);
+            this.clear();
+        }
+
+        /**
+         * Start 
+         */
+        _start() {
+            pins.digitalWritePin(this.dio, 0);
+            pins.digitalWritePin(this.clk, 0);
+        }
+
+        /**
+         * Stop
+         */
+        _stop() {
+            pins.digitalWritePin(this.dio, 0);
+            pins.digitalWritePin(this.clk, 1);
+            pins.digitalWritePin(this.dio, 1);
+        }
+
+        /**
+         * send command1
+         */
+        _write_data_cmd() {
+            this._start();
+            this._write_byte(TM1640_CMD1);
+            this._stop();
+        }
+
+        /**
+         * send command3
+         */
+        _write_dsp_ctrl() {
+            this._start();
+            this._write_byte(TM1640_CMD3 | this._ON | this.brightness);
+            this._stop();
+        }
+
+        /**
+         * send a byte to 2-wire interface
+         */
+        _write_byte(b: number) {
+            for (let i = 0; i < 8; i++) {
+                pins.digitalWritePin(this.clk, 0);
+                pins.digitalWritePin(this.dio, (b >> i) & 1);
+                pins.digitalWritePin(this.clk, 1);
+
+            }
+            pins.digitalWritePin(this.clk, 1);
+            pins.digitalWritePin(this.clk, 0);
+        }
+
+        intensity(val: number = 7) {
+            if (val < 1) {
+                this.off();
+                return;
+            }
+            if (val > 8) val = 8;
+            this._ON = 8;
+            this.brightness = val - 1;
+            this._write_data_cmd();
+            this._write_dsp_ctrl();
+        }
+
+        /**
+         * set data to TM1640, with given bit
+         */
+        _dat(bit: number, dat: number) {
+            this._write_data_cmd();
+            this._start();
+            this._write_byte(TM1640_CMD2 | (bit % this.count))
+            this._write_byte(dat);
+            this._stop();
+            this._write_dsp_ctrl();
+        }
+
+
+        showbit(num: number = 5, bit: number = 0) {
+            this.buf[bit % this.count] = _SEGMENTS[num % 16]
+            this._dat(bit, _SEGMENTS[num % 16])
+        }
+
+        showNumber(num: number) {
+            if (num < 0) {
+                this._dat(0, 0x40) // '-'
+                num = -num
+            }
+            else
+                this.showbit(Math.idiv(num, 1000) % 10)
+            this.showbit(num % 10, 3)
+            this.showbit(Math.idiv(num, 10) % 10, 2)
+            this.showbit(Math.idiv(num, 100) % 10, 1)
+        }
+
+        showHex(num: number) {
+            if (num < 0) {
+                this._dat(0, 0x40) // '-'
+                num = -num
+            }
+            else
+                this.showbit((num >> 12) % 16)
+            this.showbit(num % 16, 3)
+            this.showbit((num >> 4) % 16, 2)
+            this.showbit((num >> 8) % 16, 1)
+        }
+
+
+        showDP(bit: number = 1, show: boolean = true) {
+            bit = bit % this.count
+            if (show) this._dat(bit, this.buf[bit] | 0x80)
+            else this._dat(bit, this.buf[bit] & 0x7F)
+        }
+
+        clear() {
+            for (let i = 0; i < this.count; i++) {
+                this._dat(i, 0)
+                this.buf[i] = 0
+            }
+        }
+
+        on() {
+            this._ON = 8;
+            this._write_data_cmd();
+            this._write_dsp_ctrl();
+        }
+
+        off() {
+            this._ON = 0;
+            this._write_data_cmd();
+            this._write_dsp_ctrl();
+        }
+    }
+    /**
+     * 创建 TM1640 对象.
+     * @param clk the CLK pin for TM1640, eg: DigitalPin.P1
+     * @param dio the DIO pin for TM1640, eg: DigitalPin.P2
+     * @param intensity the brightness of the LED, eg: 7
+     * @param count the count of the LED, eg: 4
+     */
+    function startbit_TM1640create(port: ultrasonicPort, intensity: number, count: number): startbit_TM1640LEDs {
+        let digitaltube = new startbit_TM1640LEDs();
+        switch (port) {
+            case ultrasonicPort.port1:
+                digitaltube.clk = DigitalPin.P2;
+                digitaltube.dio = DigitalPin.P1;
+                break;
+            case ultrasonicPort.port2:
+                digitaltube.clk = DigitalPin.P14;
+                digitaltube.dio = DigitalPin.P13;
+                break;
+        }
+
+        if ((count < 1) || (count > 5)) count = 4;
+        digitaltube.count = count;
+        digitaltube.brightness = intensity;
+        digitaltube.init();
+        return digitaltube;
+    }
+
+  /**
+     * @param clk the CLK pin for TM1640, eg: DigitalPin.P1
+     * @param dio the DIO pin for TM1640, eg: DigitalPin.P2
+     * @param intensity the brightness of the LED, eg: 7
+     * @param count the count of the LED, eg: 4
+     */
+    //% weight=84 blockId=startbit_digitaltube block="digitaltube|%port|intensity %intensity|LED count %count"
+    export function startbit_digitaltube(port: ultrasonicPort, intensity: number, count: number) {
+        Digitaltube = startbit_TM1640create(port, intensity, count);
+    }
+
+    /**
+     * show a number. 
+     * @param num is a number, eg: 0
+     */
+    //% weight=83 blockId=startbit_showNumber block="digitaltube show number| %num"
+    export function startbit_showNumber(num: number)  {
+        Digitaltube.showNumber(num);
+    }
+
+    /**
+     * show a number in given position. 
+     * @param num number will show, eg: 5
+     * @param bit the position of the LED, eg: 0
+     */
+    //% weight=82 blockId=startbit_showbit block="digitaltube show digit| %num|at %bit"
+    export function startbit_showbit(num: number = 5, bit: number = 0) {
+        Digitaltube.showbit(num, bit);
+    }
+
+    /**
+     * show a hex number. 
+     * @param num is a hex number, eg: 0
+     */
+    //% weight=81 blockId=startbit_showhex block="digitaltube show hex number| %num"
+    export function startbit_showhex(num: number) {
+        Digitaltube.showHex(num);
+    }
+
+    /**
+     * show or hide dot point. 
+     * @param bit is the position, eg: 1
+     * @param show is show/hide dp, eg: true
+     */
+    //% weight=80 blockId=startbit_showDP block="digitaltube DotPoint at| %bit|show %show"
+    export function startbit_showDP(bit: number = 1, show: boolean = true) {
+        Digitaltube.showDP(bit, show);
+    } 
+
+    /**
+     * set TM1640 intensity, range is [0-8], 0 is off.
+     * @param val the brightness of the TM1640, eg: 7
+     */
+    //% weight=79 blockId=startbit_intensity block=" digitaltube set intensity %val"
+    export function startbit_intensity(val: number = 7) {
+        Digitaltube.intensity(val);
+    } 
+
+    /**
+     * turn off LED. 
+     */
+    //% weight=78 blockId=startbit_off block="turn off digitaltube"
+    export function startbit_off() {
+        Digitaltube.off();
+    }
+
+    /**
+     * turn on LED. 
+     */
+    //% weight=77 blockId=startbit_on block="turn on digitaltube"
+    export function startbit_on() {
+        Digitaltube.on();
+    }
+
+    /**
+     * clear LED. 
+     */
+    //%weight=76 blockId=startbit_clear blockGap=50 block="clear digitaltube"
+    export function startbit_clear() {
+        Digitaltube.clear();
+    }  
     /**
     * Set ir enter learn mode
     * @param num number of the learn code in 1-10. eg: 1
@@ -1097,7 +1397,9 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.INFRARED:cmdStr = "O";break;      
            case Qdee_IOTCmdType.BUSSERVO:cmdStr = "P";break;   
            case Qdee_IOTCmdType.MOTOR:cmdStr = "Q";break; 
-           case Qdee_IOTCmdType.SENSOR:cmdStr = "R";break;            
+           case Qdee_IOTCmdType.SENSOR: cmdStr = "R"; break;    
+           case Qdee_IOTCmdType.FAN: cmdStr = "T"; break;
+           case Qdee_IOTCmdType.DIGITAL_TUBE: cmdStr = "U"; break;
        }
        cmdStr += data.toString();
        cmdStr += "$";

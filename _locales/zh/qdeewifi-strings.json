@@ -107,5 +107,6 @@
 	"qdeewifi.qdeewifi_lightSensor_init|block":"初始化光线传感器 %port",
 	"qdeewifi.qdeewifi_soilHumi_init|block":"初始化土壤湿度传感器 %port",
 	"qdeewifi.qdeewifi_raindrop_init|block":"初始化雨滴传感器 %port",
-	"qdeewifi.qdeewifi_avoidobstacle_init|block":"初始化避障传感器 %port"
+	"qdeewifi.qdeewifi_avoidobstacle_init|block":"初始化避障传感器 %port",
+	"qdeewifi.qdeewifi_setFanSpeed|block":"设置风扇|%port|转速(-100~100) %speed1"
 }
