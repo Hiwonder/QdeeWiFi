@@ -102,6 +102,10 @@
 	"qdeewifi.touchKeyPort.port6|block":"接口6",
 	"qdeewifi.touchKeyPort.port8|block":"接口8",
 	"qdeewifi.qdee_touchButton|block":"触摸按钮|%port|被按下",
-	"qdeewifi.qdee_sendSelectSensorData|block":"发送个传感器数据超声波|接口 %port1|光线亮度|接口 %port2|土壤湿度|接口 %port3|雨滴|接口 %port4|避障接口|%port5"
-
+	"qdeewifi.qdee_sendSelectSensorData|block":"发送各个传感器数据",
+	"qdeewifi.qdeewifi_ultrasonic_init|block":"初始化超声波测距传感器 %port",
+	"qdeewifi.qdeewifi_lightSensor_init|block":"初始化光线传感器 %port",
+	"qdeewifi.qdeewifi_soilHumi_init|block":"初始化土壤湿度传感器 %port",
+	"qdeewifi.qdeewifi_raindrop_init|block":"初始化雨滴传感器 %port",
+	"qdeewifi.qdeewifi_avoidobstacle_init|block":"初始化避障传感器 %port"
 }

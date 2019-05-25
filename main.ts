@@ -154,6 +154,13 @@ namespace qdeewifi {
     let versionNum: number = -1;//-1为未定义
     let readTimes: number = 0;
 
+    const INVALID_PORT = 0xff;
+    let ultraPort = INVALID_PORT;
+    let lightPort = INVALID_PORT;
+    let soilHumiPort = INVALID_PORT;
+    let rainDropPort = INVALID_PORT;
+    let avoidPort = INVALID_PORT;
+
     /**
      * Qdee IoT initialization, please execute at boot time
     */
@@ -177,6 +184,51 @@ namespace qdeewifi {
         }
         basic.pause(1500);
         initExtPins();
+    }
+
+    /**
+     * Qdee ultrasonic initialization, please execute at boot time
+    */
+    //% weight=98 blockId=qdeewifi_ultrasonic_init block="Initialize Qdee ultrasonic sensor %port"
+    //% subcategory=Init
+    export function qdeewifi_ultrasonic_init(port: ultrasonicPort) {
+        ultraPort = port;
+    }
+
+    /**
+     * Qdee light sensor initialization, please execute at boot time
+    */
+    //% weight=96 blockId=qdeewifi_lightSensor_init block="Initialize Qdee light sensor %port"
+    //% subcategory=Init
+    export function qdeewifi_lightSensor_init(port: LightPort) {
+        lightPort = port;
+    }
+
+    /**
+     * Qdee soil humidity sensor initialization, please execute at boot time
+    */
+    //% weight=94 blockId=qdeewifi_soilHumi_init block="Initialize Qdee soil humidity sensor %port"
+    //% subcategory=Init
+    export function qdeewifi_soilHumi_init(port: LightPort) {
+        soilHumiPort = port;
+    }
+
+    /**
+     * Qdee raindrop sensor initialization, please execute at boot time
+    */
+    //% weight=92 blockId=qdeewifi_raindrop_init block="Initialize Qdee rain drop sensor %port"
+    //% subcategory=Init
+    export function qdeewifi_raindrop_init(port: LightPort) {
+        rainDropPort = port;
+    }
+
+    /**
+     * Qdee avoid obstacle sensor initialization, please execute at boot time
+    */
+    //% weight=91 blockId=qdeewifi_avoidobstacle_init block="Initialize Qdee avoid obstacle sensor %port"
+    //% subcategory=Init
+    export function qdeewifi_avoidobstacle_init(port: avoidSensorPort) {
+        avoidPort = port;
     }
 
     function sendVersionCmd() {
@@ -218,8 +270,6 @@ namespace qdeewifi {
     let PB1_ad = 0;
     let MESSAGE_HEAD = 0xff;
     let MESSAGE_IOT_HEAD = 0x102;
-    let servo1Angle: number = 0xfff;
-    let servo2Angle: number = 0xfff;
 
     let sensorList: number[] = [];
     /**
@@ -254,13 +304,10 @@ namespace qdeewifi {
                     {
                         currentVoltage = arg5Int*10353/200;
                     }  
-    
                     if (arg6Int != -1)
-                    
                     {
                         volume = arg6Int;
                     }   
-                    
                     PA6 = checkADPortValue(arg1Int);
                     PA7 = checkADPortValue(arg2Int);
                     PB0 = checkADPortValue(arg3Int);
@@ -388,7 +435,6 @@ namespace qdeewifi {
                  else if (arg1Int == 0)
                  {
                      control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.WATERPUMP_OFF);
-
                  }
              }    
         }    
@@ -411,17 +457,6 @@ namespace qdeewifi {
       {
         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.INFRARED);
       }           
-    //   else if(cmd.charAt(0).compare("P") == 0 && cmd.length == 9)
-    //   {
-    //     let arg1Int: number = strToNumber(cmd.substr(1, 2));//编号
-    //     let arg2Int: number = strToNumber(cmd.substr(3, 2));//角度
-    //     let arg3Int: number = strToNumber(cmd.substr(5, 4));//时间
-
-    //     if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
-    //         qdeeiot_setBusServo(busServoPort.port10,arg1Int, arg2Int-120, arg3Int);
-    //         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUSSERVO);
-    //     }
-    //   }  
       else if(cmd.charAt(0).compare("Q") == 0 && cmd.length == 5)
       {
             let arg1Int: number = strToNumber(cmd.substr(1, 2));//速度1
@@ -551,102 +586,6 @@ namespace qdeewifi {
             return -1;
     }
 
-    // /**
-    // * Set the angle of bus servo 1 to 8, range of -120~120 degree
-    // */
-    // //% weight=96 blockId=qdeeiot_setBusServo block="Set bus servo|port %port|index %index|angle(-120~120) %angle|duration %duration"
-    // //% angle.min=-120 angle.max=120
-    // //% inlineInputMode=inline
-    // //% subcategory=Control
-    // export function qdeeiot_setBusServo(port: busServoPort, index: number, angle: number, duration: number) {
-    //     angle = angle * -1;
-    //     if (angle > 120 || angle < -120) {
-    //         return;
-    //     }
-
-    //     angle += 120;
-
-    //     let position = mapRGB(angle, 0, 240, 0, 1000);
-
-    //     let buf = pins.createBuffer(10);
-    //     buf[0] = 0x55;
-    //     buf[1] = 0x55;
-    //     buf[2] = 0x08;
-    //     buf[3] = 0x03;//cmd type
-    //     buf[4] = 0x01;
-    //     buf[5] = duration & 0xff;
-    //     buf[6] = (duration >> 8) & 0xff;
-    //     buf[7] = index;
-    //     buf[8] = position & 0xff;
-    //     buf[9] = (position >> 8) & 0xff;
-    //     serial.writeBuffer(buf);
-    // }
-
-    // /**
-    // * Set the number of the servo.
-    // */
-    // //% weight=94 blockId=qdeeiot_setBusServoNum block="Set bus servo|number %port|"
-    // //% subcategory=Control
-    // export function qdeeiot_setBusServoNum(index: number) {
-    //     let buf = pins.createBuffer(5);
-    //     buf[0] = 0x55;
-    //     buf[1] = 0x55;
-    //     buf[2] = 0x03;
-    //     buf[3] = 0x36;//cmd type
-    //     buf[4] = index;
-    //     serial.writeBuffer(buf);
-    // }
-
-    // /**
-    //  * Send read qdee servos angle command
-    //  */
-    // //% weight=92 blockId=qdeeiot_readAngle block="Read|%servo|angle command "
-    // //% subcategory=Control
-    // export function qdeeiot_readAngle(servo: Servos): number {
-    //     let buf = pins.createBuffer(6);
-    //     buf[0] = 0x55;
-    //     buf[1] = 0x55;
-    //     buf[2] = 0x04;
-    //     buf[3] = 0x3E;//cmd type
-    //     buf[4] = 0x05;
-    //     buf[5] = servo;
-    //     serial.writeBuffer(buf);
-    //     basic.pause(200);
-
-    //     let value = 0;
-    //     if (servo == Servos.Servo1) {
-    //         if (servo1Angle != 0xfff) {
-    //             value = servo1Angle;
-    //             servo1Angle = 0xfff;
-    //             return value;
-    //         }
-    //         else {
-    //             basic.pause(200);
-    //             if (servo1Angle != 0xfff) {
-    //                 value = servo1Angle;
-    //                 servo1Angle = 0xfff;
-    //                 return value;
-    //             }
-    //         }
-    //     }
-    //     else if (servo == Servos.Servo2) {
-    //         if (servo2Angle != 0xfff) {
-    //             value = servo2Angle;
-    //             servo2Angle = 0xfff;
-    //             return value;
-    //         }
-    //         else {
-    //             basic.pause(200);
-    //             if (servo2Angle != 0xfff) {
-    //                 value = servo2Angle;
-    //                 servo2Angle = 0xfff;
-    //                 return value;
-    //             }
-    //         }
-    //     }
-    //     return 0;
-    // }
-
      function qdeeiot_setPwmServo(index: number, angle: number, duration: number) {
         let buf = pins.createBuffer(10);
         buf[0] = 0x55;
@@ -662,7 +601,6 @@ namespace qdeewifi {
         buf[9] = (position >> 8) & 0xff;
         serial.writeBuffer(buf);
     }
-
     /**
     * Set the angle of pwm servo, range of 0~270 degree.Servo num and angles are array type,so you can control multiple servos simultaneously
     */
@@ -918,7 +856,6 @@ namespace qdeewifi {
             }
             else
                 distanceBak = d;
-
         }
         else {
             switch (port) {
@@ -1201,10 +1138,9 @@ namespace qdeewifi {
     * Send sensor data 
     * 
     */
-   //% weight=55 blockId="qdee_sendSelectSensorData" block="Send sensor data ultrasonic|port %port1|light|port %port2|soil humidity|port %port3|raindrop|port %port4|avoidSensor port|%port5"
+   //% weight=55 blockId="qdee_sendSelectSensorData" block="Send sensor data"
   //% subcategory=Data
-  //% inlineInputMode=inline
-    export function qdee_sendSelectSensorData(port1: ultrasonicPort,port2: LightPort,port3: LightPort,port4: LightPort,port5: avoidSensorPort) {
+    export function qdee_sendSelectSensorData() {
         if (sensorList.length > 0)
         {
             let cmdStr: string = "R";
@@ -1214,11 +1150,12 @@ namespace qdeewifi {
                 switch (sensorList[i])
                 {
                     case 1: cmdStr += ("A" + volume.toString()); break;
-                    case 2: cmdStr += ("B" + qdeeiot_ultrasonic(port1).toString()); break;
-                    case 3: cmdStr += ("C" + qdeeiot_getLightLevel(port2).toString()); break;
-                    case 4: cmdStr += ("D" + qdeeiot_getsoilhumi(port3).toString()); break;
-                    case 5: cmdStr += ("E" + qdeeiot_waterdrop(port4).toString()); break;
-                    case 6: cmdStr += ("F" + qdee_avoidSensor(port5).toString());break;
+                    case 2: cmdStr += ("B" + (ultraPort != INVALID_PORT ? qdeeiot_ultrasonic(ultraPort).toString() : 'NO')); break;
+                    case 3: cmdStr += ("C" + (lightPort != INVALID_PORT ? qdeeiot_getLightLevel(lightPort).toString() : 'NO')); break;
+                    case 4: cmdStr += ("D" + (soilHumiPort != INVALID_PORT ? qdeeiot_getsoilhumi(soilHumiPort).toString() : 'NO')); break;
+                    case 5: cmdStr += ("E" + (rainDropPort != INVALID_PORT ? qdeeiot_waterdrop(rainDropPort).toString() : 'NO')); break;
+                    case 6: cmdStr += ("F" + (avoidPort != INVALID_PORT ? qdee_avoidSensor(avoidPort).toString() : 'NO')); break;
+                    case 7: cmdStr += ("G" + currentVoltage.toString()); break;
                 }
             }
             cmdStr += "$";
@@ -1233,7 +1170,7 @@ namespace qdeewifi {
             }
             serial.writeBuffer(buf);
         }
- }
+  }
 
     function mapRGB(x: number, in_min: number, in_max: number, out_min: number, out_max: number): number {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -1289,7 +1226,6 @@ namespace qdeewifi {
     function qdee_setPixelRGBSerial(lightoffset: number, r: number, g: number, b: number) {
         lhRGBLight.setPixelColorRGB(lightoffset, r, g, b);
     }
-
     /**
      * Clear the color of the colored lights and turn off the lights.
      */
