@@ -969,13 +969,12 @@ namespace qdeewifi {
         qdeeiot_digitaltube_clear();
         Digitaltube.showbit(num, bit);
     }
-
     /**
      * show or hide dot point. 
      * @param bit is the position, eg: 1
      * @param show is show/hide dp, eg: true
      */
-    //% weight=81 blockId=qdee_digitaltube_showDP block="Digitaltube show dotPoint at| %bit|show %show"
+    //% weight=81 blockId=qdee_digitaltube_showDP block="Digitaltube show dotPoint at|%bit|show %show"
     //% subcategory=Control 
     export function qdee_digitaltube_showDP(bit: number = 1, show: boolean = true) {
         Digitaltube.showDP(bit, show);
@@ -983,7 +982,7 @@ namespace qdeewifi {
     /**
      * clear LED. 
      */
-    //% weight=80 blockId=qdeeiot_digitaltube_clear blockGap=50 block="Clear digitaltube"
+    //% weight=80 blockId=qdeeiot_digitaltube_clear block="Clear digitaltube"
     //% subcategory=Control    
     export function qdeeiot_digitaltube_clear() {
         Digitaltube.clear();
@@ -1114,7 +1113,6 @@ namespace qdeewifi {
         }
         return Math.round(distance * 10 / 6 / 58);
     }
-
     /**
      * Get light level
      */
@@ -1129,18 +1127,15 @@ namespace qdeewifi {
                 value = pins.analogReadPin(AnalogPin.P1);
                 value = mapRGB(value, 0, 1023, 0, 255);
                 break;
-            
             case LightPort.port6:
                 value = PA6_ad;
                 break;
-            
             case LightPort.port8:
                 value = PB0_ad;
                 break;
         }
         return Math.round(255-value);
     }
-
     /**
      * Get soil humidity
      */
