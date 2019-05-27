@@ -894,10 +894,32 @@ namespace qdeewifi {
                 num = -num
             }
             else
-                this.showbit(Math.idiv(num, 1000) % 10)
-            this.showbit(num % 10, 3)
-            this.showbit(Math.idiv(num, 10) % 10, 2)
-            this.showbit(Math.idiv(num, 100) % 10, 1)
+            {
+                let arg1 = Math.idiv(num, 1000) % 10;
+                let arg2 = Math.idiv(num, 100) % 10;
+                let arg3 = Math.idiv(num, 10) % 10;
+                let arg4 = num % 10;
+                if (arg1 != 0)
+                {
+                    this.showbit(arg1);
+                    this.showbit(arg2, 1);
+                    this.showbit(arg3,2);
+                }
+                else
+                {
+                    if (arg2 != 0)
+                    {
+                        this.showbit(arg2, 1);
+                        this.showbit(arg3,2);
+                    }
+                    else
+                    {
+                        if (arg3 != 0)
+                            this.showbit(arg3,2); 
+                    }
+                }
+                this.showbit(arg4, 3);
+            }   
         }
         showDP(bit: number = 1, show: boolean = true) {
             bit = bit % this.count
@@ -921,13 +943,6 @@ namespace qdeewifi {
             this._write_dsp_ctrl();
         }
     }
-    /**
-     * 创建 TM1640 对象.
-     * @param clk the CLK pin for TM1640, eg: DigitalPin.P1
-     * @param dio the DIO pin for TM1640, eg: DigitalPin.P2
-     * @param intensity the brightness of the LED, eg: 7
-     * @param count the count of the LED, eg: 4
-     */
     function qdee_TM1640create(port: ultrasonicPort, intensity: number, count: number): TM1640LEDs {
         let digitaltube = new TM1640LEDs();
         switch (port) {
@@ -959,15 +974,12 @@ namespace qdeewifi {
         Digitaltube = qdee_TM1640create(port, intensity, count);
     }
     /**
-     * show a number in given position. 
-     * @param num number will show, eg: 5
-     * @param bit the position of the LED, eg: 0
+     * show a number. 
+     * @param num is a number, eg: 0
      */
-    //% weight=82 blockId=qdee_digitaltube_showbit block="Digitaltube show integer| %num|at %bit"
-    //% subcategory=Control 
-    export function qdee_digitaltube_showbit(num: number, bit: number = 0) {
-        qdeeiot_digitaltube_clear();
-        Digitaltube.showbit(num, bit);
+    //% weight=82 blockId=qdee_showNumber block="Digitaltube show number %num"
+    export function qdee_showNumber(num: number)  {
+        Digitaltube.showNumber(num);
     }
     /**
      * show or hide dot point. 
