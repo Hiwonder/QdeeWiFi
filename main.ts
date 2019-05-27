@@ -495,8 +495,8 @@ namespace qdeewifi {
         else if (cmd.charAt(0).compare("U") == 0) {
                 let arg2Int: number = strToNumber(cmd.substr(1, 4));//数码管数值
                 let arg3Int: number = strToNumber(cmd.substr(5, 1));//小数点位置
-            if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
-                qdee_showNumber(arg1Int, arg2Int);
+            if (arg2Int != -1 && arg3Int != -1) {
+                qdee_showNumber(arg2Int);
                 if (arg3Int != 5)
                     qdee_digitaltube_showDP(arg3Int, true);
             }                
