@@ -259,6 +259,7 @@ namespace qdeewifi {
     let currentVoltage: number = 0;
     let volume: number = 0;
     let lhRGBLight: QdeeRGBLight.LHQdeeRGBLight;
+    let fanSpeed: number = 0;
 
     let PA6 = 2;
     let PA7 = 2;
@@ -276,6 +277,7 @@ namespace qdeewifi {
     let MESSAGE_IOT_HEAD = 0x102;
 
     let sensorList: number[] = [];
+
     /**
     * Get the handle command.
     */
@@ -480,10 +482,27 @@ namespace qdeewifi {
             for (let i = 0; i < sensorCount; i++) {
                 sensorList.insertAt(i, strToNumber(cmd.substr(i * 2 + 1, 2)))
                 control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SENSOR);
+                }
             }
         }
-    }      
-     if (cmd.compare("IROK") == 0) {
+        else if (cmd.charAt(0).compare("T") == 0) {
+            let argInt: number = strToNumber(cmd.substr(1, 2));//速度
+            if (argInt != -1) {
+                    fanSpeed = argInt - 100
+                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FAN);
+            }
+        } 
+        else if (cmd.charAt(0).compare("U") == 0) {
+                let arg1Int: number = strToNumber(cmd.substr(1, 1));//起始位置
+                let arg2Int: number = strToNumber(cmd.substr(2, 4));//数码管数值
+                let arg3Int: number = strToNumber(cmd.substr(6, 1));//小数点位置
+            if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
+                qdee_digitaltube_showbit(arg1Int, arg2Int);
+                if (arg3Int != 5)
+                    qdee_digitaltube_showDP(arg3Int, true);
+            }                
+        }    
+        if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
         }
         if (cmd.charAt(0).compare("V") == 0 && cmd.length == 4) {
@@ -492,7 +511,7 @@ namespace qdeewifi {
                 if (arg1Int != -1 && arg2Int != -1) {
                     versionNum = arg1Int * 10 + arg2Int;
                 }
-        }
+            }
         }
         handleCmd = "";
     }
@@ -722,7 +741,7 @@ namespace qdeewifi {
             break; 
         }
     }
-  /**
+    /**
      * Set Qdee play tone
      */
     //% weight=86 blockId=qdee_playMusic block="Qdee play song|num %num|"
@@ -747,16 +766,23 @@ namespace qdeewifi {
         return ["C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4"];
     }
 
-    let Digitaltube:startbit_TM1640LEDs
+    let Digitaltube:TM1640LEDs
     let TM1640_CMD1 = 0x40;
     let TM1640_CMD2 = 0xC0;
     let TM1640_CMD3 = 0x80;
     let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
-
+      /**
+     * Get phone command set fan speed
+     */
+    //% weight=85 blockId=qdee_getFanSpeedSet block="Qdee get fan speed"
+    //% subcategory=Control
+    export function qdee_getFanSpeedSet(): number {
+        return fanSpeed;
+    }
     /**
     *	Set the speed of the fan, range of -100~100.
     */
-    //% weight=85 blockId=qdeewifi_setFanSpeed  block="Set|%port|fan speed(-100~100) %speed1"
+    //% weight=84 blockId=qdeewifi_setFanSpeed block="Set|%port|fan speed(-100~100) %speed1"
     //% speed1.min=-100 speed1.max=100
     //% subcategory=Control
     export function qdeewifi_setFanSpeed(port: ultrasonicPort, speed1: number) {
@@ -784,16 +810,15 @@ namespace qdeewifi {
         }
     }
     /**
-        * TM1640 LED display
-        */
-       export class startbit_TM1640LEDs {
+    * TM1640 LED display
+    */
+       export class TM1640LEDs {
         buf: Buffer;
         clk: DigitalPin;
         dio: DigitalPin;
         _ON: number;
         brightness: number;
         count: number;  // number of LEDs
-
         /**
          * initial TM1640
          */
@@ -804,7 +829,6 @@ namespace qdeewifi {
             this.buf = pins.createBuffer(this.count);
             this.clear();
         }
-
         /**
          * Start 
          */
@@ -812,7 +836,6 @@ namespace qdeewifi {
             pins.digitalWritePin(this.dio, 0);
             pins.digitalWritePin(this.clk, 0);
         }
-
         /**
          * Stop
          */
@@ -821,7 +844,6 @@ namespace qdeewifi {
             pins.digitalWritePin(this.clk, 1);
             pins.digitalWritePin(this.dio, 1);
         }
-
         /**
          * send command1
          */
@@ -830,7 +852,6 @@ namespace qdeewifi {
             this._write_byte(TM1640_CMD1);
             this._stop();
         }
-
         /**
          * send command3
          */
@@ -839,7 +860,6 @@ namespace qdeewifi {
             this._write_byte(TM1640_CMD3 | this._ON | this.brightness);
             this._stop();
         }
-
         /**
          * send a byte to 2-wire interface
          */
@@ -853,19 +873,6 @@ namespace qdeewifi {
             pins.digitalWritePin(this.clk, 1);
             pins.digitalWritePin(this.clk, 0);
         }
-
-        intensity(val: number = 7) {
-            if (val < 1) {
-                this.off();
-                return;
-            }
-            if (val > 8) val = 8;
-            this._ON = 8;
-            this.brightness = val - 1;
-            this._write_data_cmd();
-            this._write_dsp_ctrl();
-        }
-
         /**
          * set data to TM1640, with given bit
          */
@@ -877,13 +884,10 @@ namespace qdeewifi {
             this._stop();
             this._write_dsp_ctrl();
         }
-
-
         showbit(num: number = 5, bit: number = 0) {
             this.buf[bit % this.count] = _SEGMENTS[num % 16]
             this._dat(bit, _SEGMENTS[num % 16])
         }
-
         showNumber(num: number) {
             if (num < 0) {
                 this._dat(0, 0x40) // '-'
@@ -895,39 +899,22 @@ namespace qdeewifi {
             this.showbit(Math.idiv(num, 10) % 10, 2)
             this.showbit(Math.idiv(num, 100) % 10, 1)
         }
-
-        showHex(num: number) {
-            if (num < 0) {
-                this._dat(0, 0x40) // '-'
-                num = -num
-            }
-            else
-                this.showbit((num >> 12) % 16)
-            this.showbit(num % 16, 3)
-            this.showbit((num >> 4) % 16, 2)
-            this.showbit((num >> 8) % 16, 1)
-        }
-
-
         showDP(bit: number = 1, show: boolean = true) {
             bit = bit % this.count
             if (show) this._dat(bit, this.buf[bit] | 0x80)
             else this._dat(bit, this.buf[bit] & 0x7F)
         }
-
         clear() {
             for (let i = 0; i < this.count; i++) {
                 this._dat(i, 0)
                 this.buf[i] = 0
             }
         }
-
         on() {
             this._ON = 8;
             this._write_data_cmd();
             this._write_dsp_ctrl();
         }
-
         off() {
             this._ON = 0;
             this._write_data_cmd();
@@ -941,8 +928,8 @@ namespace qdeewifi {
      * @param intensity the brightness of the LED, eg: 7
      * @param count the count of the LED, eg: 4
      */
-    function startbit_TM1640create(port: ultrasonicPort, intensity: number, count: number): startbit_TM1640LEDs {
-        let digitaltube = new startbit_TM1640LEDs();
+    function qdee_TM1640create(port: ultrasonicPort, intensity: number, count: number): TM1640LEDs {
+        let digitaltube = new TM1640LEDs();
         switch (port) {
             case ultrasonicPort.port1:
                 digitaltube.clk = DigitalPin.P2;
@@ -953,7 +940,6 @@ namespace qdeewifi {
                 digitaltube.dio = DigitalPin.P13;
                 break;
         }
-
         if ((count < 1) || (count > 5)) count = 4;
         digitaltube.count = count;
         digitaltube.brightness = intensity;
@@ -967,37 +953,21 @@ namespace qdeewifi {
      * @param intensity the brightness of the LED, eg: 7
      * @param count the count of the LED, eg: 4
      */
-    //% weight=84 blockId=startbit_digitaltube block="digitaltube|%port|intensity %intensity|LED count %count"
-    export function startbit_digitaltube(port: ultrasonicPort, intensity: number, count: number) {
-        Digitaltube = startbit_TM1640create(port, intensity, count);
+    //% weight=83 blockId=qdee_digitaltube block="Digitaltube|%port|intensity %intensity|LED count %count"
+    //% subcategory=Control
+    export function qdee_digitaltube(port: ultrasonicPort, intensity: number, count: number) {
+        Digitaltube = qdee_TM1640create(port, intensity, count);
     }
-
-    /**
-     * show a number. 
-     * @param num is a number, eg: 0
-     */
-    //% weight=83 blockId=startbit_showNumber block="digitaltube show number| %num"
-    export function startbit_showNumber(num: number)  {
-        Digitaltube.showNumber(num);
-    }
-
     /**
      * show a number in given position. 
      * @param num number will show, eg: 5
      * @param bit the position of the LED, eg: 0
      */
-    //% weight=82 blockId=startbit_showbit block="digitaltube show digit| %num|at %bit"
-    export function startbit_showbit(num: number = 5, bit: number = 0) {
+    //% weight=82 blockId=qdee_digitaltube_showbit block="Digitaltube show integer| %num|at %bit"
+    //% subcategory=Control 
+    export function qdee_digitaltube_showbit(num: number, bit: number = 0) {
+        qdeeiot_digitaltube_clear();
         Digitaltube.showbit(num, bit);
-    }
-
-    /**
-     * show a hex number. 
-     * @param num is a hex number, eg: 0
-     */
-    //% weight=81 blockId=startbit_showhex block="digitaltube show hex number| %num"
-    export function startbit_showhex(num: number) {
-        Digitaltube.showHex(num);
     }
 
     /**
@@ -1005,48 +975,24 @@ namespace qdeewifi {
      * @param bit is the position, eg: 1
      * @param show is show/hide dp, eg: true
      */
-    //% weight=80 blockId=startbit_showDP block="digitaltube DotPoint at| %bit|show %show"
-    export function startbit_showDP(bit: number = 1, show: boolean = true) {
+    //% weight=81 blockId=qdee_digitaltube_showDP block="Digitaltube show dotPoint at| %bit|show %show"
+    //% subcategory=Control 
+    export function qdee_digitaltube_showDP(bit: number = 1, show: boolean = true) {
         Digitaltube.showDP(bit, show);
     } 
-
-    /**
-     * set TM1640 intensity, range is [0-8], 0 is off.
-     * @param val the brightness of the TM1640, eg: 7
-     */
-    //% weight=79 blockId=startbit_intensity block=" digitaltube set intensity %val"
-    export function startbit_intensity(val: number = 7) {
-        Digitaltube.intensity(val);
-    } 
-
-    /**
-     * turn off LED. 
-     */
-    //% weight=78 blockId=startbit_off block="turn off digitaltube"
-    export function startbit_off() {
-        Digitaltube.off();
-    }
-
-    /**
-     * turn on LED. 
-     */
-    //% weight=77 blockId=startbit_on block="turn on digitaltube"
-    export function startbit_on() {
-        Digitaltube.on();
-    }
-
     /**
      * clear LED. 
      */
-    //%weight=76 blockId=startbit_clear blockGap=50 block="clear digitaltube"
-    export function startbit_clear() {
+    //% weight=80 blockId=qdeeiot_digitaltube_clear blockGap=50 block="Clear digitaltube"
+    //% subcategory=Control    
+    export function qdeeiot_digitaltube_clear() {
         Digitaltube.clear();
     }  
     /**
     * Set ir enter learn mode
     * @param num number of the learn code in 1-10. eg: 1
     */
-    //% weight=82 blockId=qdeeiot_ir_learn_mode block="Set ir enter learning mode,code number(1~10) %num|"   
+    //% weight=79 blockId=qdeeiot_ir_learn_mode block="Set ir enter learning mode,code number(1~10) %num|"   
     //% num.min=1 num.max=10    
     //% subcategory=IR
     export function qdeeiot_ir_learn_mode(num: number) {
@@ -1066,7 +1012,7 @@ namespace qdeewifi {
     * Let Qdee send ir learn data
     * @param num number of the learn code in 1-10. eg: 1
     */
-    //% weight=80 blockId=qdee_send_learn_data block="Let Qdee send ir learning code,code|number(1~10) %num|"
+    //% weight=78 blockId=qdee_send_learn_data block="Let Qdee send ir learning code,code|number(1~10) %num|"
     //% num.min=1 num.max=10  
     //% subcategory=IR
     export function qdee_send_learn_data(num: number) {
@@ -1086,7 +1032,7 @@ namespace qdeewifi {
     /**
     * Get the volume level detected by the sound sensor, range 0 to 255
     */
-    //% weight=78 blockId=qdeeiot_getSoundVolume block="Sound volume"
+    //% weight=77 blockId=qdeeiot_getSoundVolume block="Sound volume"
     //% subcategory=Sensor
     export function qdeeiot_getSoundVolume(): number {
         return volume;
