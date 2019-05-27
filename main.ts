@@ -978,6 +978,7 @@ namespace qdeewifi {
      * @param num is a number, eg: 0
      */
     //% weight=82 blockId=qdee_showNumber block="Digitaltube show number %num"
+    //% subcategory=Control
     export function qdee_showNumber(num: number)  {
         Digitaltube.showNumber(num);
     }
