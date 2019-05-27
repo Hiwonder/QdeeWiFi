@@ -493,11 +493,10 @@ namespace qdeewifi {
             }
         } 
         else if (cmd.charAt(0).compare("U") == 0) {
-                let arg1Int: number = strToNumber(cmd.substr(1, 1));//起始位置
-                let arg2Int: number = strToNumber(cmd.substr(2, 4));//数码管数值
-                let arg3Int: number = strToNumber(cmd.substr(6, 1));//小数点位置
+                let arg2Int: number = strToNumber(cmd.substr(1, 4));//数码管数值
+                let arg3Int: number = strToNumber(cmd.substr(5, 1));//小数点位置
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1) {
-                qdee_digitaltube_showbit(arg1Int, arg2Int);
+                qdee_showNumber(arg1Int, arg2Int);
                 if (arg3Int != 5)
                     qdee_digitaltube_showDP(arg3Int, true);
             }                
