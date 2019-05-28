@@ -309,7 +309,7 @@ namespace qdeewifi {
     
                     if (arg5Int != -1)
                     {
-                        currentVoltage = arg5Int*10353/200;
+                        currentVoltage = Math.round(arg5Int*10353/200);
                     }  
                     if (arg6Int != -1)
                     {
