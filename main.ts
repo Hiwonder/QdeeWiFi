@@ -366,16 +366,6 @@ namespace qdeewifi {
                         PB10 = arg8Int;
                     }        
                 }
-                else if (cmd.length == 3)//蜂鸣器
-                {
-                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                    if (arg1Int != -1)
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUZZER);
-                        qdee_sendSensorData(Qdee_IOTCmdType.BUZZER,arg1Int);
-                        //qdee_playMusic(arg1Int);
-                    }     
-                }
             }
             if (cmd.charAt(0).compare("C") == 0)
             {
