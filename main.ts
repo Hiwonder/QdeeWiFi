@@ -75,7 +75,7 @@ namespace qdeewifi {
         //% block="Temperature"
         TEMP = 8,
         //% block="Humidity"
-         HUMI = 9,
+        HUMI = 9,
         //% block="Soil humidity"
         SOIL_HUMI = 10,   
         //% block="Ultrasonic"
@@ -466,7 +466,14 @@ namespace qdeewifi {
             if (arg2Int != -1 && arg3Int != -1) {
                 qdee_showNumber(arg2Int);
                 if (arg3Int != 5)
-                    qdee_digitaltube_showDP(arg3Int, true);
+                {
+                    if (arg3Int == 6)
+                    {
+                        qdeeiot_digitaltube_clear();
+                    }
+                    else
+                        qdee_digitaltube_showDP(arg3Int, true);
+                }    
             }                
         }    
         if (cmd.compare("IROK") == 0) {

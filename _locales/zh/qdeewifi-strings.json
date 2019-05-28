@@ -55,6 +55,7 @@
 	"qdeewifi.Qdee_IOTCmdType.SENSOR_OFF|block":"传感器数据关闭", 
 	"qdeewifi.Qdee_IOTCmdType.FAN|block":"风扇控制",
 	"qdeewifi.Qdee_IOTCmdType.DIGITAL_TUBE|block":"数码管显示",
+	"qdeewifi.Qdee_IOTCmdType.INFRARED|block":"红外监控",
 	"qdeewifi.Temp_humi.Temperature|block":"温度",
 	"qdeewifi.Temp_humi.Humidity|block":"湿度",
 	"QdeeLights.Light1|block":"彩灯1",
