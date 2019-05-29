@@ -142,6 +142,16 @@ namespace qdeewifi {
     let soilHumiPort = INVALID_PORT;
     let rainDropPort = INVALID_PORT;
     let avoidPort = INVALID_PORT;
+    let temphumiPort = INVALID_PORT;
+    let fanPort = INVALID_PORT;
+    let servoPort = INVALID_PORT;
+    let waterpumPort = INVALID_PORT;
+
+    let Digitaltube:TM1640LEDs
+    let TM1640_CMD1 = 0x40;
+    let TM1640_CMD2 = 0xC0;
+    let TM1640_CMD3 = 0x80;
+    let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
 
     /**
      * Qdee IoT initialization, please execute at boot time
@@ -169,6 +179,14 @@ namespace qdeewifi {
     }
 
     /**
+     * Qdee temperature and humidity sensor initialization, please execute at boot time
+    */
+    //% weight=99 blockId=qdeewifi_temphumi_init block="Initialize Qdee temperature and humidity sensor at port %port"
+    //% subcategory=Init
+    export function qdeewifi_temphumi_init(port: TempSensor) {
+        temphumiPort = port;
+    }
+    /**
      * Qdee ultrasonic initialization, please execute at boot time
     */
     //% weight=98 blockId=qdeewifi_ultrasonic_init block="Initialize Qdee ultrasonic sensor %port"
@@ -180,7 +198,7 @@ namespace qdeewifi {
     /**
      * Qdee light sensor initialization, please execute at boot time
     */
-    //% weight=96 blockId=qdeewifi_lightSensor_init block="Initialize Qdee light sensor %port"
+    //% weight=97 blockId=qdeewifi_lightSensor_init block="Initialize Qdee light sensor %port"
     //% subcategory=Init
     export function qdeewifi_lightSensor_init(port: LightPort) {
         lightPort = port;
@@ -189,7 +207,7 @@ namespace qdeewifi {
     /**
      * Qdee soil humidity sensor initialization, please execute at boot time
     */
-    //% weight=94 blockId=qdeewifi_soilHumi_init block="Initialize Qdee soil humidity sensor %port"
+    //% weight=96 blockId=qdeewifi_soilHumi_init block="Initialize Qdee soil humidity sensor %port"
     //% subcategory=Init
     export function qdeewifi_soilHumi_init(port: LightPort) {
         soilHumiPort = port;
@@ -198,7 +216,7 @@ namespace qdeewifi {
     /**
      * Qdee raindrop sensor initialization, please execute at boot time
     */
-    //% weight=92 blockId=qdeewifi_raindrop_init block="Initialize Qdee rain drop sensor %port"
+    //% weight=95 blockId=qdeewifi_raindrop_init block="Initialize Qdee rain drop sensor %port"
     //% subcategory=Init
     export function qdeewifi_raindrop_init(port: LightPort) {
         rainDropPort = port;
@@ -207,11 +225,50 @@ namespace qdeewifi {
     /**
      * Qdee avoid obstacle sensor initialization, please execute at boot time
     */
-    //% weight=91 blockId=qdeewifi_avoidobstacle_init block="Initialize Qdee avoid obstacle sensor %port"
+    //% weight=94 blockId=qdeewifi_avoidobstacle_init block="Initialize Qdee avoid obstacle sensor %port"
     //% subcategory=Init
     export function qdeewifi_avoidobstacle_init(port: avoidSensorPort) {
         avoidPort = port;
     }
+
+    /**
+     * @param clk the CLK pin for TM1640, eg: DigitalPin.P1
+     * @param dio the DIO pin for TM1640, eg: DigitalPin.P2
+     * @param intensity the brightness of the LED, eg: 7
+     * @param count the count of the LED, eg: 4
+     */
+    //% weight=93 blockId=qdee_digitaltube block="Initialize digitaltube|%port|intensity %intensity|LED count %count"
+    //% subcategory=Init
+    export function qdee_digitaltube(port: ultrasonicPort, intensity: number, count: number) {
+        Digitaltube = qdee_TM1640create(port, intensity, count);
+    }
+
+    /**
+     * Fan port initialization, please execute at boot time
+     */
+    //% weight=92 blockId=qdee_initfanPort block="Initialize fan %port"
+    //% subcategory=Init
+    export function qdee_initfanPort(port: ultrasonicPort) {
+        fanPort = port;
+    }
+    /**
+     * Pwm servo port initialization, please execute at boot time
+     */
+    //% weight=91 blockId=qdee_initPwmServo block="Initialize pwm servo %port"
+    //% subcategory=Init
+    export function qdee_initPwmServo(port: busServoPort) {
+        servoPort = port;
+    }
+
+    /**
+     * Waterpump initialization, please execute at boot time
+     */
+    //% weight=90 blockId=qdee_initWaterpump block="Initialize waterpump %port"
+    //% subcategory=Init
+    export function qdee_initWaterpump(port: WaterPumPort) {
+        waterpumPort = port;
+    }
+
 
     function sendVersionCmd() {
         let buf = pins.createBuffer(4);
@@ -580,7 +637,7 @@ namespace qdeewifi {
     /**
     * Set the angle of pwm servo, range of 0~270 degree.Servo num and angles are array type,so you can control multiple servos simultaneously
     */
-    //% weight=90 blockId=qdeeiot_setPwmServos block="Set pwm servo|index %index|angle %angle|duration %duration"
+    //% weight=89 blockId=qdeeiot_setPwmServos block="Set pwm servo|index %index|angle %angle|duration %duration"
     //% inlineInputMode=inline
     //% subcategory=Control
     export function qdeeiot_setPwmServos(index: number[], angle: number[], duration: number) {
@@ -605,7 +662,7 @@ namespace qdeewifi {
     /**
     *	Set the speed of the number 1 motor and number 2 motor, range of -100~100, that can control the tank to go advance or turn of.
     */
-    //% weight=89 blockId=qdeeiot_setMotorSpeed block="Set motor1 speed(-100~100)|%speed1|and motor2|speed %speed2"
+    //% weight=88 blockId=qdeeiot_setMotorSpeed block="Set motor1 speed(-100~100)|%speed1|and motor2|speed %speed2"
     //% speed1.min=-100 speed1.max=100
     //% speed2.min=-100 speed2.max=100
     //% subcategory=Control
@@ -628,10 +685,10 @@ namespace qdeewifi {
     /**
     *	Set the water pump on/off
     */
-    //% weight=88 blockId=qdeeiot_setWaterPump block="Set water pump|%port|speed(0~100) %speed|"
+    //% weight=87 blockId=qdeeiot_setWaterPump block="Set water pump speed(0~100) %speed"
     //% speed.min=0 speed.max=100
     //% subcategory=Control
-    export function qdeeiot_setWaterPump(port: WaterPumPort, speed: number) {
+    export function qdeeiot_setWaterPump(speed: number) {
         if (speed > 100) {
             speed = 100;
         }
@@ -640,12 +697,12 @@ namespace qdeewifi {
         buf[1] = 0x55;
         buf[2] = 0x04;
         buf[3] = 0x32;//cmd type
-        if (port == WaterPumPort.port1)
+        if (waterpumPort == WaterPumPort.port1)
         {
             buf[4] = 0;
             buf[5] = speed;
         }
-        else if (port == WaterPumPort.port2)
+        else if (waterpumPort == WaterPumPort.port2)
         {
             buf[4] = speed;
             buf[5] = 0;    
@@ -656,7 +713,7 @@ namespace qdeewifi {
     /**
     * Set the Qdee show facial expressions
     */
-    //% weight=87 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
+    //% weight=86 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
     //% type.min=0 type.max=10
     //% subcategory=Control
     export function qdee_show_expressions(type: number) {
@@ -716,11 +773,7 @@ namespace qdeewifi {
         }
     }
 
-    let Digitaltube:TM1640LEDs
-    let TM1640_CMD1 = 0x40;
-    let TM1640_CMD2 = 0xC0;
-    let TM1640_CMD3 = 0x80;
-    let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
+
       /**
      * Get phone command set fan speed
      */
@@ -732,17 +785,17 @@ namespace qdeewifi {
     /**
     *	Set the speed of the fan, range of -100~100.
     */
-    //% weight=84 blockId=qdeewifi_setFanSpeed block="Set|%port|fan speed(-100~100) %speed1"
+    //% weight=84 blockId=qdeewifi_setFanSpeed block="Set fan speed(-100~100) %speed1"
     //% speed1.min=-100 speed1.max=100
     //% subcategory=Control
-    export function qdeewifi_setFanSpeed(port: ultrasonicPort, speed1: number) {
+    export function qdeewifi_setFanSpeed(speed1: number) {
         if (speed1 > 100 || speed1 < -100) {
             return;
         }
         let pin1 = AnalogPin.P1;
         let pin2 = AnalogPin.P2;
 
-        if (port == ultrasonicPort.port2) {
+        if (fanPort == ultrasonicPort.port2) {
             pin1 = AnalogPin.P13;
             pin2 = AnalogPin.P14;
         }
@@ -912,17 +965,6 @@ namespace qdeewifi {
         return digitaltube;
     }
 
-  /**
-     * @param clk the CLK pin for TM1640, eg: DigitalPin.P1
-     * @param dio the DIO pin for TM1640, eg: DigitalPin.P2
-     * @param intensity the brightness of the LED, eg: 7
-     * @param count the count of the LED, eg: 4
-     */
-    //% weight=83 blockId=qdee_digitaltube block="Digitaltube|%port|intensity %intensity|LED count %count"
-    //% subcategory=Control
-    export function qdee_digitaltube(port: ultrasonicPort, intensity: number, count: number) {
-        Digitaltube = qdee_TM1640create(port, intensity, count);
-    }
     /**
      * show a number. 
      * @param num is a number, eg: 0
@@ -1011,80 +1053,53 @@ namespace qdeewifi {
     /**
      * Get the distance of ultrasonic detection to the obstacle 
      */
-    //% weight=74 blockId=qdeeiot_ultrasonic  block="Ultrasonic|port %port|distance(cm)"
+    //% weight=74 blockId=qdeeiot_ultrasonic  block="Ultrasonic distance(cm)"
     //% subcategory=Sensor    
-    export function qdeeiot_ultrasonic(port: ultrasonicPort): number {
+    export function qdeeiot_ultrasonic(): number {
         let trigPin: DigitalPin = DigitalPin.P1;
         let echoPin: DigitalPin = DigitalPin.P2;
         let distance: number = 0;
         let d: number = 0;
-        if (versionNum == -1)//没有读取到版本号
-        {
-            switch (port) {
-                case ultrasonicPort.port1:
-                    trigPin = DigitalPin.P1;
-                    break;
-                case ultrasonicPort.port2:
-                    trigPin = DigitalPin.P13;
-                    break;
-            }
-            pins.setPull(trigPin, PinPullMode.PullNone);
-            pins.digitalWritePin(trigPin, 0);
-            control.waitMicros(2);
-            pins.digitalWritePin(trigPin, 1);
-            control.waitMicros(10);
-            pins.digitalWritePin(trigPin, 0);
 
-            d = pins.pulseIn(trigPin, PulseValue.High, 15000);
-            distance = d;
-            // filter timeout spikes
-            if (distance == 0 || distance >= 13920) {
-                distance = distanceBak;
-            }
-            else
-                distanceBak = d;
+        switch (ultraPort) {
+            case ultrasonicPort.port1:
+                trigPin = DigitalPin.P1;
+                echoPin = DigitalPin.P2;
+                break;
+            case ultrasonicPort.port2:
+                trigPin = DigitalPin.P13;
+                echoPin = DigitalPin.P14;
+                break;
         }
-        else {
-            switch (port) {
-                case ultrasonicPort.port1:
-                    trigPin = DigitalPin.P1;
-                    echoPin = DigitalPin.P2;
-                    break;
-                case ultrasonicPort.port2:
-                    trigPin = DigitalPin.P13;
-                    echoPin = DigitalPin.P14;
-                    break;
-            }
-            pins.setPull(echoPin, PinPullMode.PullNone);
-            pins.setPull(trigPin, PinPullMode.PullNone);
+        pins.setPull(echoPin, PinPullMode.PullNone);
+        pins.setPull(trigPin, PinPullMode.PullNone);
 
-            // send pulse
-            pins.digitalWritePin(trigPin, 0);
-            control.waitMicros(2);
-            pins.digitalWritePin(trigPin, 1);
-            control.waitMicros(10);
-            pins.digitalWritePin(trigPin, 0);
-            // read pulse
-            d = pins.pulseIn(echoPin, PulseValue.High, 15000);
-            distance = d;
-            // filter timeout spikes
-            if (distance == 0 || distance >= 13920) {
-                distance = distanceBak;
-            }
-            else
-                distanceBak = d;
+        // send pulse
+        pins.digitalWritePin(trigPin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(trigPin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(trigPin, 0);
+        // read pulse
+        d = pins.pulseIn(echoPin, PulseValue.High, 15000);
+        distance = d;
+        // filter timeout spikes
+        if (distance == 0 || distance >= 13920) {
+            distance = distanceBak;
         }
+        else
+            distanceBak = d;
         return Math.round(distance * 10 / 6 / 58);
     }
     /**
      * Get light level
      */
-    //% weight=72 blockId=qdeeiot_getLightLevel block="Get|%port|light level(0~255)"
+    //% weight=72 blockId=qdeeiot_getLightLevel block="Get light level(0~255)"
     //% subcategory=Sensor     
-    export function qdeeiot_getLightLevel(port: LightPort): number
+    export function qdeeiot_getLightLevel(): number
     {
         let value = 0;
-        switch (port)
+        switch (lightPort)
         {
             case LightPort.port1:
                 value = pins.analogReadPin(AnalogPin.P1);
@@ -1102,19 +1117,19 @@ namespace qdeewifi {
     /**
      * Get soil humidity
      */
-    //% weight=70 blockId="qdeeiot_getsoilhumi" block="Qdee|port %port|get soil humidity"
+    //% weight=70 blockId="qdeeiot_getsoilhumi" block="Qdee get soil humidity"
     //% subcategory=Sensor     
-    export function qdeeiot_getsoilhumi(port: LightPort): number {
+    export function qdeeiot_getsoilhumi(): number {
         let value: number = 0;
-        if (port == LightPort.port1) {
+        if (soilHumiPort == LightPort.port1) {
             value = pins.analogReadPin(AnalogPin.P1);
             value = mapRGB(value, 0, 1023, 0, 100);
         }
-        else if (port == LightPort.port6) {
+        else if (soilHumiPort == LightPort.port6) {
             value = PA6_ad;
             value = mapRGB(value, 0, 255, 0, 100);
         }
-        else if (port == LightPort.port8) {
+        else if (soilHumiPort == LightPort.port8) {
             value = PB0_ad;
             value = mapRGB(value, 0, 255, 0, 100);
         }
@@ -1123,18 +1138,18 @@ namespace qdeewifi {
     /**
      * Get soil humidity
      */
-    //% weight=68 blockId="qdeeiot_waterdrop" block="Qdee|port %port|get water drop sensor ad(0~255)"
+    //% weight=68 blockId="qdeeiot_raindrop" block="Qdee get rain drop sensor ad value(0~255)"
     //% subcategory=Sensor     
-    export function qdeeiot_waterdrop(port: LightPort): number {
+    export function qdeeiot_raindrop(): number {
         let value: number = 0;
-        if (port == LightPort.port1) {
+        if (rainDropPort == LightPort.port1) {
             value = pins.analogReadPin(AnalogPin.P1);
             value = mapRGB(value, 0, 1023, 0, 255);
         }
-        else if (port == LightPort.port6) {
+        else if (rainDropPort == LightPort.port6) {
             value = PA6_ad;
         }
-        else if (port == LightPort.port8) {
+        else if (rainDropPort == LightPort.port8) {
             value = PB0_ad;
         }
         return Math.round(value);
@@ -1143,12 +1158,12 @@ namespace qdeewifi {
 /**
 * Get the obstacle avoidance sensor status,1 detect obstacle,0 no detect obstacle
 */   
-   //% weight=64 blockId=qdee_avoidSensor block="Obstacle avoidance sensor|port %port|detect obstacle"
+   //% weight=64 blockId=qdee_avoidSensor block="Obstacle avoidance sensor detect obstacle ?"
    //% subcategory=Sensor    
-   export function qdee_avoidSensor(port: avoidSensorPort): number {
+   export function qdee_avoidSensor(): number {
     let status = 0;
     let flag: number = 0;
-    switch (port)
+    switch (avoidPort)
     {
         case avoidSensorPort.port1:
             pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
@@ -1256,9 +1271,9 @@ namespace qdeewifi {
     /**
       * Get sensor temperature and humidity
       */
-    //% weight=60 blockId="qdeeiot_gettemperature" block="Qdee|port %port|get %select"
+    //% weight=60 blockId="qdeeiot_gettemperature" block="Qdee get %select"
     //% subcategory=Sensor     
-    export function qdeeiot_gettemperature(port: TempSensor, select: Temp_humi): number {
+    export function qdeeiot_gettemperature(select: Temp_humi): number {
         return readTempHumi(select);
     }
 
@@ -1335,11 +1350,11 @@ namespace qdeewifi {
                 switch (sensorList[i])
                 {
                     case 1: cmdStr += ("A" + volume.toString()); break;
-                    case 2: cmdStr += ("B" + (ultraPort != INVALID_PORT ? qdeeiot_ultrasonic(ultraPort).toString() : 'NO')); break;
-                    case 3: cmdStr += ("C" + (lightPort != INVALID_PORT ? qdeeiot_getLightLevel(lightPort).toString() : 'NO')); break;
-                    case 4: cmdStr += ("D" + (soilHumiPort != INVALID_PORT ? qdeeiot_getsoilhumi(soilHumiPort).toString() : 'NO')); break;
-                    case 5: cmdStr += ("E" + (rainDropPort != INVALID_PORT ? qdeeiot_waterdrop(rainDropPort).toString() : 'NO')); break;
-                    case 6: cmdStr += ("F" + (avoidPort != INVALID_PORT ? qdee_avoidSensor(avoidPort).toString() : 'NO')); break;
+                    case 2: cmdStr += ("B" + (ultraPort != INVALID_PORT ? qdeeiot_ultrasonic().toString() : 'NO')); break;
+                    case 3: cmdStr += ("C" + (lightPort != INVALID_PORT ? qdeeiot_getLightLevel().toString() : 'NO')); break;
+                    case 4: cmdStr += ("D" + (soilHumiPort != INVALID_PORT ? qdeeiot_getsoilhumi().toString() : 'NO')); break;
+                    case 5: cmdStr += ("E" + (rainDropPort != INVALID_PORT ? qdeeiot_raindrop().toString() : 'NO')); break;
+                    case 6: cmdStr += ("F" + (avoidPort != INVALID_PORT ? qdee_avoidSensor().toString() : 'NO')); break;
                     case 7: cmdStr += ("G" + currentVoltage.toString()); break;
                 }
             }
