@@ -142,9 +142,7 @@ namespace qdeewifi {
     let soilHumiPort = INVALID_PORT;
     let rainDropPort = INVALID_PORT;
     let avoidPort = INVALID_PORT;
-    let temphumiPort = INVALID_PORT;
     let fanPort = INVALID_PORT;
-    let servoPort = INVALID_PORT;
     let waterpumPort = INVALID_PORT;
 
     let Digitaltube:TM1640LEDs
@@ -160,7 +158,6 @@ namespace qdeewifi {
     //% subcategory=Init
     export function qdeewifi_Init() {
         qdee_initRGBLight();
-        qdee_initTempHumiSensor();
         serial.redirect(
             SerialPin.P12,
             SerialPin.P8,
@@ -184,7 +181,7 @@ namespace qdeewifi {
     //% weight=99 blockId=qdeewifi_temphumi_init block="Initialize Qdee temperature and humidity sensor at port %port"
     //% subcategory=Init
     export function qdeewifi_temphumi_init(port: TempSensor) {
-        temphumiPort = port;
+        qdee_initTempHumiSensor();
     }
     /**
      * Qdee ultrasonic initialization, please execute at boot time
@@ -257,7 +254,6 @@ namespace qdeewifi {
     //% weight=91 blockId=qdee_initPwmServo block="Initialize pwm servo %port"
     //% subcategory=Init
     export function qdee_initPwmServo(port: busServoPort) {
-        servoPort = port;
     }
 
     /**
@@ -689,6 +685,8 @@ namespace qdeewifi {
     //% speed.min=0 speed.max=100
     //% subcategory=Control
     export function qdeeiot_setWaterPump(speed: number) {
+        if (waterpumPort == INVALID_PORT)
+            return;
         if (speed > 100) {
             speed = 100;
         }
@@ -789,6 +787,8 @@ namespace qdeewifi {
     //% speed1.min=-100 speed1.max=100
     //% subcategory=Control
     export function qdeewifi_setFanSpeed(speed1: number) {
+        if (fanPort == INVALID_PORT)
+            return;
         if (speed1 > 100 || speed1 < -100) {
             return;
         }
@@ -1056,6 +1056,8 @@ namespace qdeewifi {
     //% weight=74 blockId=qdeeiot_ultrasonic  block="Ultrasonic distance(cm)"
     //% subcategory=Sensor    
     export function qdeeiot_ultrasonic(): number {
+        if (ultraPort == INVALID_PORT)
+            return 0;
         let trigPin: DigitalPin = DigitalPin.P1;
         let echoPin: DigitalPin = DigitalPin.P2;
         let distance: number = 0;
@@ -1098,6 +1100,8 @@ namespace qdeewifi {
     //% subcategory=Sensor     
     export function qdeeiot_getLightLevel(): number
     {
+        if (lightPort == INVALID_PORT)
+            return 0;
         let value = 0;
         switch (lightPort)
         {
@@ -1120,6 +1124,8 @@ namespace qdeewifi {
     //% weight=70 blockId="qdeeiot_getsoilhumi" block="Qdee get soil humidity"
     //% subcategory=Sensor     
     export function qdeeiot_getsoilhumi(): number {
+        if (soilHumiPort == INVALID_PORT)
+            return 0;
         let value: number = 0;
         if (soilHumiPort == LightPort.port1) {
             value = pins.analogReadPin(AnalogPin.P1);
@@ -1141,6 +1147,8 @@ namespace qdeewifi {
     //% weight=68 blockId="qdeeiot_raindrop" block="Qdee get rain drop sensor ad value(0~255)"
     //% subcategory=Sensor     
     export function qdeeiot_raindrop(): number {
+        if (rainDropPort == INVALID_PORT)
+            return 0;
         let value: number = 0;
         if (rainDropPort == LightPort.port1) {
             value = pins.analogReadPin(AnalogPin.P1);
@@ -1160,30 +1168,32 @@ namespace qdeewifi {
 */   
    //% weight=64 blockId=qdee_avoidSensor block="Obstacle avoidance sensor detect obstacle ?"
    //% subcategory=Sensor    
-   export function qdee_avoidSensor(): number {
-    let status = 0;
-    let flag: number = 0;
-    switch (avoidPort)
-    {
-        case avoidSensorPort.port1:
-            pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
-            status = pins.digitalReadPin(DigitalPin.P1); break;
-        case avoidSensorPort.port2:
-            pins.setPull(DigitalPin.P13, PinPullMode.PullUp);
-            status = pins.digitalReadPin(DigitalPin.P13);
-            break;
-        case avoidSensorPort.port3:
-            pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
-            status = pins.digitalReadPin(DigitalPin.P16);
-            break;
-        case avoidSensorPort.port6:status = PA6;break;
-        case avoidSensorPort.port8:status = PB0;break;
-    }   
-    if (status == 1)
-        flag = 0;
-    else
-        flag = 1;
-    return flag;
+    export function qdee_avoidSensor(): number {
+        if (avoidPort == INVALID_PORT)
+            return 0;
+        let status = 0;
+        let flag: number = 0;
+        switch (avoidPort)
+        {
+            case avoidSensorPort.port1:
+                pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
+                status = pins.digitalReadPin(DigitalPin.P1); break;
+            case avoidSensorPort.port2:
+                pins.setPull(DigitalPin.P13, PinPullMode.PullUp);
+                status = pins.digitalReadPin(DigitalPin.P13);
+                break;
+            case avoidSensorPort.port3:
+                pins.setPull(DigitalPin.P16, PinPullMode.PullUp);
+                status = pins.digitalReadPin(DigitalPin.P16);
+                break;
+            case avoidSensorPort.port6:status = PA6;break;
+            case avoidSensorPort.port8:status = PB0;break;
+        }   
+        if (status == 1)
+            flag = 0;
+        else
+            flag = 1;
+        return flag;
     }
     
     let ATH10_I2C_ADDR = 0x38;
