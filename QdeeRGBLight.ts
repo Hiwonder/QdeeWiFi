@@ -62,8 +62,18 @@ enum QdeeLightsBelt {
         Light9 = 0x08,
         //% block="Light 10"
         Light10 = 0x09,
+        //% block="Light 11"
+        Light11 = 0x0A,
+        //% block="Light 12"
+        Light12 = 0x0B,
+        //% block="Light 13"
+        Light13 = 0x0C,
+        //% block="Light 14"
+        Light14 = 0x0D,
+        //% block="Light 15"
+        Light15 = 0x0E,        
         //% block="All"
-        All = 0x0A
+        All = 0x0F
 }
 
 /**
@@ -111,7 +121,7 @@ namespace QdeeRGBLight {
         }
 
         setBeltPixelColor(pixeloffset: number, rgb: QdeeRGBColors): void {
-            if (pixeloffset == 10)//全部
+            if (pixeloffset == 15)//全部
             {
                 for (let i = 0; i < this._length; i++)
                 {
@@ -146,9 +156,15 @@ namespace QdeeRGBLight {
         }
 
         setPixelColorRGB(pixeloffset: number, r: number, g: number, b: number): void {
-
-            for (let i = 0; i < this._length; i++) {
-                this.setPixelRGBValue(i, r, g, b);
+            if (pixeloffset == this._length) {
+                for (let i = 0; i < this._length; i++) {
+                    this.setPixelRGBValue(i, r, g, b);
+                }
+                
+            }
+            else
+            {
+                this.setPixelRGBValue(pixeloffset, r, g, b);    
             }
             this.show();
         }

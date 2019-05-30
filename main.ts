@@ -101,7 +101,9 @@ namespace qdeewifi {
         //% block="Fan"
         FAN = 21,       
         //% block="digital tube"
-        DIGITAL_TUBE = 22
+        DIGITAL_TUBE = 22,
+        //% block="light belt"
+        LIGHT_BELT = 23
      }
 
     export enum Temp_humi {
@@ -131,6 +133,15 @@ namespace qdeewifi {
         port6 = 0x06,
         //% block="Port 8"
         port8 = 0x08
+    }
+
+    export enum lightbeltPort {
+        //% block="Port 1"
+        port1 = 0x01,
+        //% block="Port 2"
+        port2 = 0x02,
+        //% block="Port 3"
+        port3 = 0x03
     }
 
     let versionNum: number = -1;//-1为未定义
@@ -265,6 +276,33 @@ namespace qdeewifi {
         waterpumPort = port;
     }
 
+    let lhRGBLightBelt: QdeeRGBLight.LHQdeeRGBLight;
+
+    /**
+	 * Initialize Light belt
+	 */
+    //% weight=89 blockId=qdee_belt_initRGBLight block="Initialize light belt at port %port"
+    //% subcategory=Init
+    export function qdee_belt_initRGBLight(port: lightbeltPort) {
+        switch (port) {
+            case lightbeltPort.port1:
+                if (!lhRGBLightBelt) {
+                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P1, 15, QdeeRGBPixelMode.RGB);
+                }
+                break;
+            case lightbeltPort.port2:
+                if (!lhRGBLightBelt) {
+                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P13, 15, QdeeRGBPixelMode.RGB);
+                }
+                break;
+            case lightbeltPort.port3:
+                if (!lhRGBLightBelt) {
+                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P16, 15, QdeeRGBPixelMode.RGB);
+                }
+                break;
+        }
+        qdee_clearLight();
+    }
 
     function sendVersionCmd() {
         let buf = pins.createBuffer(4);
@@ -514,8 +552,8 @@ namespace qdeewifi {
             }
         } 
         else if (cmd.charAt(0).compare("U") == 0) {
-                let arg2Int: number = strToNumber(cmd.substr(1, 4));//数码管数值
-                let arg3Int: number = strToNumber(cmd.substr(5, 1));//小数点位置
+            let arg2Int: number = strToNumber(cmd.substr(1, 4));//数码管数值
+            let arg3Int: number = strToNumber(cmd.substr(5, 1));//小数点位置
             if (arg2Int != -1 && arg3Int != -1) {
                 qdee_showNumber(arg2Int);
                 if (arg3Int != 5)
@@ -528,7 +566,22 @@ namespace qdeewifi {
                         qdee_digitaltube_showDP(arg3Int, true);
                 }    
             }                
-        }    
+        }
+        else if (cmd.charAt(0).compare("V") == 0)
+        {
+            let arg1Int: number = strToNumber(cmd.substr(1, 2));
+            let arg2Int: number = strToNumber(cmd.substr(3, 2));
+            let arg3Int: number = strToNumber(cmd.substr(5, 2));
+            let arg4Int: number = strToNumber(cmd.substr(7, 2));
+     
+            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT_BELT);
+               
+            if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
+            {
+                qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,arg1Int);
+                qdee_belt_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);   
+            }   
+        }        
         if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
         }
@@ -633,7 +686,7 @@ namespace qdeewifi {
     /**
     * Set the angle of pwm servo, range of 0~270 degree.Servo num and angles are array type,so you can control multiple servos simultaneously
     */
-    //% weight=89 blockId=qdeeiot_setPwmServos block="Set pwm servo|index %index|angle %angle|duration %duration"
+    //% weight=88 blockId=qdeeiot_setPwmServos block="Set pwm servo|index %index|angle %angle|duration %duration"
     //% inlineInputMode=inline
     //% subcategory=Control
     export function qdeeiot_setPwmServos(index: number[], angle: number[], duration: number) {
@@ -658,7 +711,7 @@ namespace qdeewifi {
     /**
     *	Set the speed of the number 1 motor and number 2 motor, range of -100~100, that can control the tank to go advance or turn of.
     */
-    //% weight=88 blockId=qdeeiot_setMotorSpeed block="Set motor1 speed(-100~100)|%speed1|and motor2|speed %speed2"
+    //% weight=87 blockId=qdeeiot_setMotorSpeed block="Set motor1 speed(-100~100)|%speed1|and motor2|speed %speed2"
     //% speed1.min=-100 speed1.max=100
     //% speed2.min=-100 speed2.max=100
     //% subcategory=Control
@@ -681,7 +734,7 @@ namespace qdeewifi {
     /**
     *	Set the water pump on/off
     */
-    //% weight=87 blockId=qdeeiot_setWaterPump block="Set water pump speed(0~100) %speed"
+    //% weight=86 blockId=qdeeiot_setWaterPump block="Set water pump speed(0~100) %speed"
     //% speed.min=0 speed.max=100
     //% subcategory=Control
     export function qdeeiot_setWaterPump(speed: number) {
@@ -711,7 +764,7 @@ namespace qdeewifi {
     /**
     * Set the Qdee show facial expressions
     */
-    //% weight=86 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
+    //% weight=85 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
     //% type.min=0 type.max=10
     //% subcategory=Control
     export function qdee_show_expressions(type: number) {
@@ -775,7 +828,7 @@ namespace qdeewifi {
       /**
      * Get phone command set fan speed
      */
-    //% weight=85 blockId=qdee_getFanSpeedSet block="Qdee get fan speed"
+    //% weight=84 blockId=qdee_getFanSpeedSet block="Qdee get fan speed"
     //% subcategory=Control
     export function qdee_getFanSpeedSet(): number {
         return fanSpeed;
@@ -783,7 +836,7 @@ namespace qdeewifi {
     /**
     *	Set the speed of the fan, range of -100~100.
     */
-    //% weight=84 blockId=qdeewifi_setFanSpeed block="Set fan speed(-100~100) %speed1"
+    //% weight=83 blockId=qdeewifi_setFanSpeed block="Set fan speed(-100~100) %speed1"
     //% speed1.min=-100 speed1.max=100
     //% subcategory=Control
     export function qdeewifi_setFanSpeed(speed1: number) {
@@ -1330,6 +1383,7 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.SENSOR: cmdStr = "R"; break;    
            case Qdee_IOTCmdType.FAN: cmdStr = "T"; break;
            case Qdee_IOTCmdType.DIGITAL_TUBE: cmdStr = "U"; break;
+           case Qdee_IOTCmdType.LIGHT_BELT: cmdStr = "V"; break;
        }
        cmdStr += data.toString();
        cmdStr += "$";
@@ -1444,5 +1498,64 @@ namespace qdeewifi {
     //% subcategory=Coloured_lights    
     export function qdee_clearLight() {
         lhRGBLight.clear();
+    }
+
+    /**
+     * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
+     */
+    //% weight=44 blockId=qdee_belt_setPixelRGB block="Set light belt|%lightoffset|color to %rgb"
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_setPixelRGB(lightoffset: QdeeLightsBelt, rgb: QdeeRGBColors) {
+        lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
+    }
+     
+    function qdee_belt_setPixelRGBSerial(lightoffset: QdeeLightsBelt, r: number, g: number, b: number) {
+        lhRGBLightBelt.setPixelColorRGB(lightoffset, r, g, b);
+    }
+    /**
+     * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
+     */
+    //% weight=42 blockId=qdee_belt_setPixelRGBIndex block="Set light belt|%lightoffset|color to %rgb(1~9)"
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_setPixelRGBIndex(lightoffset: QdeeLightsBelt, rgb: number) {
+        lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
+    }
+    
+    /**
+     * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
+     */
+    //% weight=40 blockId=qdee_belt_setPixelRGBSingle block="Set light belt index(0~14)|%lightoffset|color to %rgb"
+    //% lightoffset.min=0 lightoffset.max=14 
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_setPixelRGBSingle(lightoffset: number, rgb: QdeeRGBColors) {
+        lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
+    }
+     
+    /**
+     * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
+     */
+    //% weight=38 blockId=qdee_belt_setPixelRGBSingleRGBIndex block="Set light belt index(0~14)|%lightoffset|color to %rgb(1~9)"
+    //% lightoffset.min=0  lightoffset.max=14 
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_setPixelRGBSingleRGBIndex(lightoffset: number, rgb: number) {
+        lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
+    }
+    
+    /**
+     * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
+     */
+    //% weight=36 blockId=qdee_belt_showLight block="Show light belt"
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_showLight() {
+        lhRGBLightBelt.show();
+    }
+
+    /**
+     * Clear the color of the colored lights and turn off the lights.
+     */
+    //% weight=34 blockGap=50 blockId=qdee_belt_clearLight block="Clear light belt"
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_clearLight() {
+        lhRGBLightBelt.clear();
     }
 }
