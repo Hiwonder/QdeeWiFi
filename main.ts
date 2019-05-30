@@ -971,7 +971,8 @@ namespace qdeewifi {
      */
     //% weight=82 blockId=qdee_showNumber block="Digitaltube show number %num"
     //% subcategory=Control
-    export function qdee_showNumber(num: number)  {
+    export function qdee_showNumber(num: number) {
+        Digitaltube.clear();
         Digitaltube.showNumber(num);
     }
     /**
