@@ -103,7 +103,15 @@ namespace qdeewifi {
         //% block="digital tube"
         DIGITAL_TUBE = 22,
         //% block="light belt"
-        LIGHT_BELT = 23
+        LIGHT_BELT = 23,
+        //% block="Flowing mode ON"
+        FLOWING_ON = 24,   
+        //% block="Flowing mode OFF"
+        FLOWING_OFF = 25,         
+        //% block="Roll mode ON"
+        ROLL_ON = 26,       
+        //% block="Roll mode OFF"
+        ROLL_OFF = 27           
      }
 
     export enum Temp_humi {
@@ -574,12 +582,40 @@ namespace qdeewifi {
             let arg3Int: number = strToNumber(cmd.substr(5, 2));
             let arg4Int: number = strToNumber(cmd.substr(7, 2));
      
-            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT_BELT);
-               
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
-            {
-                qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,arg1Int);
-                qdee_belt_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);   
+            { 
+                if (arg1Int == 0x10) {
+                    if (arg4Int == 1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_ON);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,21);
+                    }
+                    else if (arg4Int == 0)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_OFF);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,20);
+                    }
+                }
+                else if (arg1Int == 0x11)
+                {
+                    if (arg4Int == 1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_ON);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,23);
+                    }
+                    else if (arg4Int == 0)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_OFF);
+                        ee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
+                    }
+                }
+                else
+                {
+                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT_BELT);
+                    qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,arg1Int);
+                    qdee_belt_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);  
+                }
+                    
             }   
         }        
         if (cmd.compare("IROK") == 0) {
@@ -1383,7 +1419,12 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.SENSOR: cmdStr = "R"; break;    
            case Qdee_IOTCmdType.FAN: cmdStr = "T"; break;
            case Qdee_IOTCmdType.DIGITAL_TUBE: cmdStr = "U"; break;
-           case Qdee_IOTCmdType.LIGHT_BELT: cmdStr = "V"; break;
+           case Qdee_IOTCmdType.LIGHT_BELT:
+           case Qdee_IOTCmdType.FLOWING_ON:
+           case Qdee_IOTCmdType.FLOWING_OFF:
+           case Qdee_IOTCmdType.ROLL_ON:
+           case Qdee_IOTCmdType.ROLL_OFF:
+               cmdStr = "V"; break;
        }
        cmdStr += data.toString();
        cmdStr += "$";
