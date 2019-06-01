@@ -606,7 +606,7 @@ namespace qdeewifi {
                     else if (arg4Int == 0)
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_OFF);
-                        ee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
                     }
                 }
                 else
