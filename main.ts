@@ -354,7 +354,9 @@ namespace qdeewifi {
     let MESSAGE_IOT_HEAD = 0x102;
 
     let sensorList: number[] = [];
-
+    let setColorArgR = 0x00;
+    let setColorArgG = 0x00;
+    let setColorArgB = 0x00;
     /**
     * Get the handle command.
     */
@@ -584,29 +586,32 @@ namespace qdeewifi {
      
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
             { 
+                setColorArgR = arg2Int;
+                setColorArgG = arg3Int;
+                setColorArgB = arg4Int;
                 if (arg1Int == 0x10) {
-                    if (arg4Int == 1)
+                    if (arg2Int == 0 && arg3Int == 0 && arg4Int == 0)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_OFF);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT, 20);
+                    }
+                    else if (arg4Int == 0)
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_ON);
                         qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,21);
                     }
-                    else if (arg4Int == 0)
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_OFF);
-                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,20);
-                    }
                 }
                 else if (arg1Int == 0x11)
                 {
-                    if (arg4Int == 1)
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_ON);
-                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,23);
-                    }
-                    else if (arg4Int == 0)
+                    if (arg2Int == 0 && arg3Int == 0 && arg4Int == 0)
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_OFF);
                         qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
+                    }
+                    else if (arg4Int == 0)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_ON);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,23);
                     }
                 }
                 else
