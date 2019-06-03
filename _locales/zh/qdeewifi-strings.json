@@ -117,11 +117,12 @@
 	"qdeewifi.lightbeltPort.port1|block":"接口1",
 	"qdeewifi.lightbeltPort.port2|block":"接口2",
 	"qdeewifi.lightbeltPort.port3|block":"接口3",
-	"qdeewifi.qdee_belt_setPixelRGBIndex|block":"设置灯带|%lightoffset|段颜色为 %rgb",
+	"qdeewifi.qdee_belt_setPixelRGBIndex|block":"设置灯带|%lightoffset|颜色为 %rgb",
 	"qdeewifi.qdee_send_remote_phone_data|block":"Qdee发送手机遥控码 %data",
 	"qdeewifi.qdee_belt_setPixelRGBSingle|block":"设置灯带灯索引(0~14)|%lightoffset|颜色 %rgb(1~9)",
 	"qdeewifi.qdee_belt_setPixelRGBSingleRGBIndex|block":"设置灯带索引(0~14)|%lightoffset|颜色编号 %rgb(1~9)",
-	"qdeewifi.qdee_belt_setPixelRGB|block":"设置灯带|%lightoffset|段颜色 %rgb",
+	"qdeewifi.qdee_belt_setPixelRGB|block":"设置灯带|%lightoffset|颜色 %rgb",
+	"qdeewifi.qdee_belt_setPixelRGBWiFi|block":"根据WiFi数据设置灯带|%lightoffset|颜色 %rgb",
 	"qdeewifi.qdee_belt_showLight|block":"显示灯带",
 	"qdeewifi.qdee_belt_clearLight|block":"关闭灯带"
 

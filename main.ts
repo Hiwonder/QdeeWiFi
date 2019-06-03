@@ -1554,9 +1554,19 @@ namespace qdeewifi {
     export function qdee_belt_setPixelRGB(lightoffset: QdeeLightsBelt, rgb: QdeeRGBColors) {
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
     }
-     
-    function qdee_belt_setPixelRGBSerial(lightoffset: QdeeLightsBelt, r: number, g: number, b: number) {
+    
+    function qdee_belt_setPixelRGBSerial(lightoffset: number, r: number, g: number, b: number) {
         lhRGBLightBelt.setPixelColorRGB(lightoffset, r, g, b);
+    }
+
+    /**
+     * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
+     */
+    //% weight=43 blockId=qdee_belt_setPixelRGBWiFi block="Set light belt|%lightoffset|(0~14) color according to WiFi data"
+    //% lightoffset.min=0 lightoffset.max=14 
+    //% subcategory=Coloured_lights    
+    export function qdee_belt_setPixelRGBWiFi(lightoffset: number) {
+        lhRGBLightBelt.setPixelColorRGB(lightoffset, setColorArgR, setColorArgG, setColorArgB);
     }
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
