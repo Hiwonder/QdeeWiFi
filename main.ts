@@ -309,7 +309,7 @@ namespace qdeewifi {
                 }
                 break;
         }
-        qdee_clearLight();
+        qdee_belt_clearLight();
     }
 
     function sendVersionCmd() {
@@ -620,7 +620,6 @@ namespace qdeewifi {
                     qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,arg1Int);
                     qdee_belt_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);  
                 }
-                    
             }   
         }        
         if (cmd.compare("IROK") == 0) {
