@@ -595,7 +595,7 @@ namespace qdeewifi {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_OFF);
                         qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT, 20);
                     }
-                    else if (arg4Int == 0)
+                    else
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_ON);
                         qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,21);
@@ -608,7 +608,7 @@ namespace qdeewifi {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_OFF);
                         qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
                     }
-                    else if (arg4Int == 0)
+                    else
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_ON);
                         qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,23);
