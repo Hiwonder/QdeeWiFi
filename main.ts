@@ -537,6 +537,7 @@ namespace qdeewifi {
             let arg1Int: number = strToNumber(cmd.substr(1, 2));//速度1
             let arg2Int: number = strToNumber(cmd.substr(3, 2));//速度2    
             qdeeiot_setMotorSpeed(arg1Int - 100, arg2Int - 100);    
+            qdee_sendSensorData(Qdee_IOTCmdType.MOTOR, arg1Int);    
             control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.MOTOR);
       } 
       else if (cmd.charAt(0).compare("R") == 0) {
