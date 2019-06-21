@@ -453,8 +453,9 @@ namespace qdeewifi {
                     if (arg1Int != -1)
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SHOW);
-                        qdee_show_expressions(arg1Int);
                         qdee_sendSensorData(Qdee_IOTCmdType.SHOW,arg1Int);
+                        qdee_show_expressions(arg1Int);
+                        
                   }    
               }
           }
