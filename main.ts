@@ -563,7 +563,6 @@ namespace qdeewifi {
             let argInt: number = strToNumber(cmd.substr(1, 2));//速度
             if (argInt != -1) {
                 fanSpeed = argInt - 100;
-                qdeewifi_setFanSpeed(fanSpeed);
                 control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FAN);
             }
         } 
