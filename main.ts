@@ -170,6 +170,8 @@ namespace qdeewifi {
     let TM1640_CMD3 = 0x80;
     let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
 
+    let colorSensorStatus = false;
+
     /**
      * Qdee IoT initialization, please execute at boot time
     */
@@ -200,7 +202,7 @@ namespace qdeewifi {
     //% weight=99 blockId=qdeewifi_temphumi_init block="Initialize Qdee temperature and humidity sensor at port %port"
     //% subcategory=Init
     export function qdeewifi_temphumi_init(port: TempSensor) {
-        qdee_initTempHumiSensor();
+        colorSensorStatus = qdee_initTempHumiSensor();
     }
     /**
      * Qdee ultrasonic initialization, please execute at boot time
@@ -264,7 +266,7 @@ namespace qdeewifi {
      */
     //% weight=92 blockId=qdee_initfanPort block="Initialize fan %port"
     //% subcategory=Init
-    export function qdee_initfanPort(port: ultrasonicPort) {
+    export function qdee_initfanPort(port: avoidSensorPort) {
         fanPort = port;
     }
     /**
@@ -857,35 +859,89 @@ namespace qdeewifi {
     /**
     *	Set the speed of the fan, range of -100~100.
     */
-    //% weight=83 blockId=qdeewifi_setFanSpeed block="Set fan speed(-100~100) %speed1"
+    //% weight=83 blockId=qdeewifi_setFanSpeed block="Set fan speed(-100~100) %speed"
     //% speed1.min=-100 speed1.max=100
     //% subcategory=Control
-    export function qdeewifi_setFanSpeed(speed1: number) {
+    export function qdeewifi_setFanSpeed(speed: number) {
         if (fanPort == INVALID_PORT)
             return;
-        if (speed1 > 100 || speed1 < -100) {
+        if (speed > 100 || speed < -100) {
             return;
         }
-        let pin1 = AnalogPin.P1;
-        let pin2 = AnalogPin.P2;
-
-        if (fanPort == ultrasonicPort.port2) {
-            pin1 = AnalogPin.P13;
-            pin2 = AnalogPin.P14;
+        if (fanPort == avoidSensorPort.port1 || fanPort == avoidSensorPort.port2)
+        {
+            let pin1 = DigitalPin.P1;
+            let pin2 = DigitalPin.P2;
+    
+            if (fanPort == avoidSensorPort.port2) {
+                pin1 = DigitalPin.P13;
+                pin2 = DigitalPin.P14;
+            }
+            if (speed < 0) {
+                pins.digitalWritePin(pin2, 0);
+                pins.digitalWritePin(pin1, 1);
+            }
+            else if (speed > 0) {
+                pins.digitalWritePin(pin1, 0);
+                pins.digitalWritePin(pin2, 1);
+            }
+            else {
+                pins.digitalWritePin(pin2, 0);
+                pins.digitalWritePin(pin1, 0);
+            }    
         }
-        if (speed1 < 0) {
-            pins.analogWritePin(pin2, 0);
-            pins.analogWritePin(pin1, pins.map(-speed1, 0, 100, 0, 1023));
+        else if(fanPort == avoidSensorPort.port3)
+        {
+            if (speed < 0) {
+                pins.digitalWritePin(DigitalPin.P16, 1);
+                setSTM32IO(0x2D,0)
+            }
+            else if (speed > 0) {
+                pins.digitalWritePin(DigitalPin.P16, 0);
+                setSTM32IO(0x2D,1)
+            }
+            else {
+                pins.digitalWritePin(DigitalPin.P16, 0);
+                setSTM32IO(0x2D,0)
+            } 
         }
-        else if (speed1 > 0) {
-            pins.analogWritePin(pin1, 0);
-            pins.analogWritePin(pin2, pins.map(speed1, 0, 100, 0, 1023));
-        }
-        else {
-            pins.analogWritePin(pin2, 0);
-            pins.analogWritePin(pin1, 0);
+        else if(fanPort == avoidSensorPort.port6 || fanPort == avoidSensorPort.port8)
+        {
+            let stm21Pin1 = 0x06;
+            let stm21Pin2 = 0x07;
+            if (fanPort == avoidSensorPort.port8)
+            {
+                stm21Pin1 = 0x10;
+                stm21Pin2 = 0x11;
+            }
+            if (speed < 0) {
+                setSTM32IO(stm21Pin1, 1)
+                setSTM32IO(stm21Pin2, 0)
+            }
+            else if (speed > 0) {
+                setSTM32IO(stm21Pin1, 0)
+                setSTM32IO(stm21Pin2, 1)
+            }
+            else {
+                setSTM32IO(stm21Pin1, 0)
+                setSTM32IO(stm21Pin2, 0)
+            }                
         }
     }
+
+    function setSTM32IO(port: number,status: number)
+    {
+        let buf = pins.createBuffer(7);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = 0x05;
+        buf[3] = 0x03E;//cmd type
+        buf[4] = 0x02;
+        buf[5] = port;
+        buf[6] = status;
+        serial.writeBuffer(buf);
+    }
+    
     /**
     * TM1640 LED display
     */
@@ -1411,7 +1467,12 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.ROLL_OFF:
                cmdStr = "V"; break;
        }
-       cmdStr += data.toString();
+       if ((cmd == Qdee_IOTCmdType.TEMP || cmd == Qdee_IOTCmdType.HUMI) && !colorSensorStatus)
+       {
+           cmdStr += 'NO';  
+       }
+       else
+            cmdStr += data.toString();
        cmdStr += "$";
        let buf = pins.createBuffer(cmdStr.length + 5);
        buf[0] = 0x55;
