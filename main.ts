@@ -276,7 +276,8 @@ namespace qdeewifi {
      */
     //% weight=91 blockId=qdee_initPwmServo block="Initialize pwm servo %port"
     //% subcategory=Init
-    export function qdee_initPwmServo(port: Servos) {
+    export function qdee_initPwmServo(port: ultrasonicPort) {
+        servoPort = port;
     }
 
     /**
@@ -726,19 +727,22 @@ namespace qdeewifi {
     }
 
      function qdeeiot_setPwmServo(index: number, angle: number, duration: number) {
-        let buf = pins.createBuffer(10);
-        buf[0] = 0x55;
-        buf[1] = 0x55;
-        buf[2] = 0x8;
-        buf[3] = 0x03;//cmd type
-        buf[4] = 0x1;
-        buf[5] = duration & 0xff;
-        buf[6] = (duration >> 8) & 0xff;
-        let position = mapRGB(angle, 0, 270, 500, 2500)
-        buf[7] = index;
-        buf[8] = position & 0xff;
-        buf[9] = (position >> 8) & 0xff;
-        serial.writeBuffer(buf);
+        angle = angle | 0;
+         angle = Math.clamp(0, 180, angle);
+         if (servoPort == ultrasonicPort.port1)
+         {
+             if(index == 1)
+                 pins.servoWritePin(AnalogPin.P1, angle)
+             else
+                pins.servoWritePin(AnalogPin.P2, angle)
+         }
+         else if(servoPort == ultrasonicPort.port2)
+         {
+            if(index == 1)
+                pins.servoWritePin(AnalogPin.P13, angle)
+            else
+                pins.servoWritePin(AnalogPin.P14, angle)
+        }
     }
 
     
