@@ -633,10 +633,6 @@ namespace qdeewifi {
                     }
                 }  
             }
-            else if (cmd.charAt(0).compare("W") == 0)
-            {        
-                qdee_sendSensorOnlineData();
-            }
             else if (cmd.length == 4)
             {
                 let arg1Int: number = strToNumber(cmd.substr(1, 1));
@@ -645,7 +641,11 @@ namespace qdeewifi {
                     versionNum = arg1Int * 10 + arg2Int;
                 }
             }
-        }        
+        }      
+        else if (cmd.charAt(0).compare("W") == 0)
+        {        
+            qdee_sendSensorOnlineData();
+        }    
         if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
             }
@@ -1499,7 +1499,7 @@ namespace qdeewifi {
     }
 
     function qdee_sendSensorOnlineData() {
-        let cmdStr: string;
+        let cmdStr: string = "W";
         if (fanPort != INVALID_PORT)
             cmdStr += "01";
         if (soilHumiPort != INVALID_PORT)
