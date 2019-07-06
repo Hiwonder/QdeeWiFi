@@ -111,7 +111,8 @@ namespace qdeewifi {
         //% block="Roll mode ON"
         ROLL_ON = 26,       
         //% block="Roll mode OFF"
-        ROLL_OFF = 27           
+        ROLL_OFF = 27,
+        SENSOR_ONLINE = 28
      }
 
     export enum Temp_humi {
@@ -163,6 +164,7 @@ namespace qdeewifi {
     let avoidPort = INVALID_PORT;
     let fanPort = INVALID_PORT;
     let waterpumPort = INVALID_PORT;
+    let servoPort = INVALID_PORT;
 
     let Digitaltube:TM1640LEDs
     let TM1640_CMD1 = 0x40;
@@ -170,7 +172,7 @@ namespace qdeewifi {
     let TM1640_CMD3 = 0x80;
     let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
 
-    let colorSensorStatus = false;
+    let tempHumiStatus = false;
 
     /**
      * Qdee IoT initialization, please execute at boot time
@@ -202,7 +204,7 @@ namespace qdeewifi {
     //% weight=99 blockId=qdeewifi_temphumi_init block="Initialize Qdee temperature and humidity sensor at port %port"
     //% subcategory=Init
     export function qdeewifi_temphumi_init(port: TempSensor) {
-        colorSensorStatus = qdee_initTempHumiSensor();
+        tempHumiStatus = qdee_initTempHumiSensor();
     }
     /**
      * Qdee ultrasonic initialization, please execute at boot time
@@ -274,7 +276,7 @@ namespace qdeewifi {
      */
     //% weight=91 blockId=qdee_initPwmServo block="Initialize pwm servo %port"
     //% subcategory=Init
-    export function qdee_initPwmServo(port: busServoPort) {
+    export function qdee_initPwmServo(port: Servos) {
     }
 
     /**
@@ -586,58 +588,66 @@ namespace qdeewifi {
         }
         else if (cmd.charAt(0).compare("V") == 0)
         {
-            let arg1Int: number = strToNumber(cmd.substr(1, 2));
+            if (cmd.length == 9)
+            {
+                let arg1Int: number = strToNumber(cmd.substr(1, 2));
             let arg2Int: number = strToNumber(cmd.substr(3, 2));
             let arg3Int: number = strToNumber(cmd.substr(5, 2));
             let arg4Int: number = strToNumber(cmd.substr(7, 2));
-     
+         
             if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
             { 
-                setColorArgR = arg2Int;
-                setColorArgG = arg3Int;
-                setColorArgB = arg4Int;
-                if (arg1Int == 0x10) {
-                    if (arg2Int == 0 && arg3Int == 0 && arg4Int == 0)
+                        setColorArgR = arg2Int;
+                        setColorArgG = arg3Int;
+                        setColorArgB = arg4Int;
+                        if (arg1Int == 0x10) {
+                        if (arg2Int == 0 && arg3Int == 0 && arg4Int == 0)
+                        {
+                            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_OFF);
+                            qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT, 20);
+                        }
+                        else
+                        {
+                            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_ON);
+                            qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,21);
+                        }
+                    }
+                    else if (arg1Int == 0x11)
                     {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_OFF);
-                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT, 20);
+                        if (arg2Int == 0 && arg3Int == 0 && arg4Int == 0)
+                        {
+                            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_OFF);
+                            qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
+                        }
+                        else
+                        {
+                            control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_ON);
+                            qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,23);
+                        }
                     }
                     else
                     {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.FLOWING_ON);
-                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,21);
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT_BELT);
+                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,arg1Int);
+                        qdee_belt_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);  
                     }
-                }
-                else if (arg1Int == 0x11)
-                {
-                    if (arg2Int == 0 && arg3Int == 0 && arg4Int == 0)
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_OFF);
-                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,22);
-                    }
-                    else
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ROLL_ON);
-                        qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,23);
-                    }
-                }
-                else
-                {
-                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT_BELT);
-                    qdee_sendSensorData(Qdee_IOTCmdType.LIGHT_BELT,arg1Int);
-                    qdee_belt_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);  
-                }
-            }   
-        }        
-        if (cmd.compare("IROK") == 0) {
-                music.playTone(988, music.beat(BeatFraction.Quarter));
-        }
-        if (cmd.charAt(0).compare("V") == 0 && cmd.length == 4) {
+                }  
+            }
+            else if (cmd.charAt(0).compare("W") == 0)
+            {        
+                qdee_sendSensorOnlineData();
+            }
+            else if (cmd.length == 4)
+            {
                 let arg1Int: number = strToNumber(cmd.substr(1, 1));
                 let arg2Int: number = strToNumber(cmd.substr(3, 1));
                 if (arg1Int != -1 && arg2Int != -1) {
                     versionNum = arg1Int * 10 + arg2Int;
                 }
+            }
+        }        
+        if (cmd.compare("IROK") == 0) {
+                music.playTone(988, music.beat(BeatFraction.Quarter));
             }
         }
         handleCmd = "";
@@ -1469,7 +1479,7 @@ namespace qdeewifi {
            case Qdee_IOTCmdType.ROLL_OFF:
                cmdStr = "V"; break;
        }
-       if ((cmd == Qdee_IOTCmdType.TEMP || cmd == Qdee_IOTCmdType.HUMI) && !colorSensorStatus)
+       if ((cmd == Qdee_IOTCmdType.TEMP || cmd == Qdee_IOTCmdType.HUMI) && !tempHumiStatus)
        {
            cmdStr += 'NO';  
        }
@@ -1487,6 +1497,40 @@ namespace qdeewifi {
        }
        serial.writeBuffer(buf);
     }
+
+    function qdee_sendSensorOnlineData() {
+        let cmdStr: string;
+        if (fanPort != INVALID_PORT)
+            cmdStr += "01";
+        if (soilHumiPort != INVALID_PORT)
+            cmdStr += "02";
+        if (tempHumiStatus)
+            cmdStr += "03";   
+        if(lightPort != INVALID_PORT)
+            cmdStr += "04";  
+        if(ultraPort != INVALID_PORT)
+            cmdStr += "05";  
+        if(servoPort != INVALID_PORT)
+            cmdStr += "06";  
+        if(rainDropPort != INVALID_PORT)
+            cmdStr += "07";         
+        if(avoidPort != INVALID_PORT)
+            cmdStr += "08";             
+        if(lhRGBLightBelt)
+            cmdStr += "09";   
+        
+        cmdStr += "$";
+        let buf = pins.createBuffer(cmdStr.length + 5);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = (cmdStr.length + 3) & 0xff;
+        buf[3] = 0x3E;//cmd type
+        buf[4] = 0x09;
+        for (let i = 0; i < cmdStr.length; i++) {
+            buf[5 + i] = cmdStr.charCodeAt(i);
+        }
+        serial.writeBuffer(buf);
+     }
 
     /**
     * Send sensor data 
