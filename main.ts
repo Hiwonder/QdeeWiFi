@@ -1522,6 +1522,8 @@ namespace qdeewifi {
             cmdStr += "08";             
         if(lhRGBLightBelt)
             cmdStr += "09";   
+        if (waterpumPort)
+            cmdStr += "10";  
         
         cmdStr += "$";
         let buf = pins.createBuffer(cmdStr.length + 5);
