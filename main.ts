@@ -592,12 +592,12 @@ namespace qdeewifi {
             if (cmd.length == 9)
             {
                 let arg1Int: number = strToNumber(cmd.substr(1, 2));
-            let arg2Int: number = strToNumber(cmd.substr(3, 2));
-            let arg3Int: number = strToNumber(cmd.substr(5, 2));
-            let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                let arg4Int: number = strToNumber(cmd.substr(7, 2));
          
-            if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
-            { 
+                if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
+                { 
                         setColorArgR = arg2Int;
                         setColorArgG = arg3Int;
                         setColorArgB = arg4Int;
@@ -1505,25 +1505,25 @@ namespace qdeewifi {
     function qdee_sendSensorOnlineData() {
         let cmdStr: string = "W";
         if (fanPort != INVALID_PORT)
-            cmdStr += "01";
+            cmdStr += "A";
         if (soilHumiPort != INVALID_PORT)
-            cmdStr += "02";
+            cmdStr += "B";
         if (tempHumiStatus)
-            cmdStr += "03";   
+            cmdStr += "C";   
         if(lightPort != INVALID_PORT)
-            cmdStr += "04";  
+            cmdStr += "D";  
         if(ultraPort != INVALID_PORT)
-            cmdStr += "05";  
+            cmdStr += "E";  
         if(servoPort != INVALID_PORT)
-            cmdStr += "06";  
+            cmdStr += "F";  
         if(rainDropPort != INVALID_PORT)
-            cmdStr += "07";         
+            cmdStr += "G";         
         if(avoidPort != INVALID_PORT)
-            cmdStr += "08";             
+            cmdStr += "H";             
         if(lhRGBLightBelt)
-            cmdStr += "09";   
+            cmdStr += "I";   
         if (waterpumPort)
-            cmdStr += "10";  
+            cmdStr += "J"; 
         
         cmdStr += "$";
         let buf = pins.createBuffer(cmdStr.length + 5);
@@ -1550,7 +1550,6 @@ namespace qdeewifi {
             let cmdStr: string = "R";
             for (let i = 0; i < sensorList.length; i++)
             {
-                cmdStr += "|";
                 switch (sensorList[i])
                 {
                     case 1: cmdStr += ("A" + volume.toString()); break;
@@ -1562,6 +1561,7 @@ namespace qdeewifi {
                     case 7: cmdStr += ("G" + currentVoltage.toString()); break;
                 }
             }
+
             cmdStr += "$";
             let buf = pins.createBuffer(cmdStr.length + 5);
             buf[0] = 0x55;
