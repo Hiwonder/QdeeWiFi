@@ -468,13 +468,13 @@ namespace qdeewifi {
           {
               if (cmd.length == 3)//显示
               {
-                  music.playTone(988, music.beat(BeatFraction.Quarter));
                   let arg1Int: number = strToNumber(cmd.substr(1, 2));
                   if (arg1Int != -1)
                   {
                       music.playTone(392, music.beat(BeatFraction.Quarter));
                       control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.IR_REMOTE);
                       qdee_sendSensorData(Qdee_IOTCmdType.IR_REMOTE, arg1Int);
+                      basic.pause(100);  
                       qdee_send_learn_data(arg1Int);
                   }      
               }
