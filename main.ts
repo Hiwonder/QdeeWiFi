@@ -84,13 +84,13 @@ namespace qdeewifi {
         WATERPUMP_ON = 12,
         //% block="Water pump off"
         WATERPUMP_OFF = 13,
-        //% block="Servo control"
+        //% block="PWM servo control"
         SERVO = 14,      
         //% block="Raindrop"
         RAINDROP = 15,         
         //% block="Infrared monitoring"
         INFRARED = 16,
-        //% block="Bus Servo"
+        //% block="Bus Servo control"
         BUSSERVO = 17,
         //% block="Motor run"
         MOTOR = 18,
@@ -112,6 +112,7 @@ namespace qdeewifi {
         ROLL_ON = 26,       
         //% block="Roll mode OFF"
         ROLL_OFF = 27,
+        //% block="Sensor online check"
         SENSOR_ONLINE = 28
      }
 
@@ -744,8 +745,6 @@ namespace qdeewifi {
                 pins.servoWritePin(AnalogPin.P14, angle)
         }
     }
-
-    
 
     /**
     *	Set the speed of the number 1 motor and number 2 motor, range of -100~100, that can control the tank to go advance or turn of.
