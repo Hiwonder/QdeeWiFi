@@ -17,14 +17,5 @@
     "testFiles": [
         "test.ts"
     ],
-    "public": true,
-    "yotta": {
-        "config": {
-            "Hiwonder": {
-                "Qdee": {
-                    "enabled": 0
-                }
-            }
-        }
-    }
+    "public": true
 }
