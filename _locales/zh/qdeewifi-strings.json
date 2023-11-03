@@ -104,7 +104,7 @@
 	"qdeewifi.qdeewifi_soilHumi_init|block":"初始化土壤湿度传感器 %port",
 	"qdeewifi.qdeewifi_raindrop_init|block":"初始化雨滴传感器 %port",
 	"qdeewifi.qdeewifi_avoidobstacle_init|block":"初始化避障传感器 %port",
-	"qdeewifi.qdeewifi_setFanSpeed|block":"设置风扇转速(-100~100) %speed1",
+	"qdeewifi.qdeewifi_setFanSpeed|block":"设置风扇转速(-100~100) %speed",
 	"qdeewifi.qdee_getFanSpeedSet|block":"设定的风扇转速值",
 	"qdeewifi.qdee_digitaltube|block":"初始化数码管|%port|亮度 %intensity|显示位数 %count",
 	"qdeewifi.qdee_showNumber|block":"数码管显示数字 %num",
