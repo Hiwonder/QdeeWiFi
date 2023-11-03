@@ -875,7 +875,7 @@ namespace qdeewifi {
     *	Set the speed of the fan, range of -100~100.
     */
     //% weight=83 blockId=qdeewifi_setFanSpeed block="Set fan speed(-100~100) %speed"
-    //% speed1.min=-100 speed1.max=100
+    //% speed.min=-100 speed.max=100
     //% subcategory=Control
     export function qdeewifi_setFanSpeed(speed: number) {
         if (fanPort == INVALID_PORT)
